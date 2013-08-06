@@ -1,0 +1,30 @@
+<h2>Beverages</h2>
+{{#linkTo "new_beverage" class="btn-spacing btn btn-small"}}New Beverage{{/linkTo}}
+<table class="table table-striped table-bordered">
+	<col style="width:48px">
+	<col>
+	<col>
+	<col>
+  <thead>
+    <th>Image</th>
+    <th>Name</th>
+    <th>ABV</th>
+    <th>IBU</th>
+  </thead>
+  <tbody>
+    {{#each beverage in controller}}
+    <tr>
+	    <td>
+				<img {{bindAttr src="beverage.image"}} width=48 height=48 class="img-rounded"/>
+			</td>
+      <td>{{beverage.name}}</td>
+      <td>{{beverage.abv}}</td>
+      <td>{{beverage.ibu}}</td>
+      <td>{{#linkTo "beverage" beverage}}view{{/linkTo}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+{{outlet beverages}}
+
+

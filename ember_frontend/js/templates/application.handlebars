@@ -1,0 +1,42 @@
+<div class="navbar navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <li class="brand" href="#">Brewmaster</li>
+      <div class="nav-collapse collapse">
+        <ul class="nav">
+					{{#view App.NavView}}
+						{{#linkTo 'index'}}Home{{/linkTo}}
+					{{/view}}
+					{{#view App.NavView}}
+						{{#linkTo 'taps'}}Taps{{/linkTo}}
+					{{/view}}
+					{{#view App.NavView}}
+						{{#linkTo 'beverages'}}Beverages{{/linkTo}}
+					{{/view}}
+					{{#view App.NavView}}
+						{{#linkTo 'producers'}}Breweries{{/linkTo}}
+					{{/view}}
+					{{#view App.NavView}}
+						{{#linkTo 'beverage_types'}}Types{{/linkTo}}
+					{{/view}}
+					{{#view App.NavView}}
+						{{#linkTo 'styles'}}Styles{{/linkTo}}
+					{{/view}}
+					{{#view App.NavView}}
+						{{#linkTo 'index'}}Other{{/linkTo}}
+					{{/view}}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="container">
+    <!--<li>{{#linkTo "index"}}Home{{/linkTo}}</li>-->
+{{outlet}}
+</div">
+

@@ -1,0 +1,15 @@
+<h2>Tap</h2>
+
+<form {{action save on="submit"}}>
+  
+  <p>
+    <label for="position">Position</label><br>
+    {{view Ember.TextField valueBinding="position" id="position"}}
+  </p>
+  
+  <p>
+    <button type="submit">Save</button>
+  </p>
+
+</form>
+

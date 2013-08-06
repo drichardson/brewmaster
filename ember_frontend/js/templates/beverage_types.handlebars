@@ -1,0 +1,28 @@
+<legend>Beverage Types</legend>
+{{#linkTo "new_beverage_type" class="btn-spacing btn btn-small"}}New Beverage Type{{/linkTo}}
+<table class="table table-striped table-bordered">
+	<col style="width:48px">
+	<col>
+	<col>
+	<col>
+  <thead>
+	  <th>Image</th>
+    <th>Name</th>
+    <th>Description</th>
+  </thead>
+  <tbody>
+    {{#each beverage_type in controller}}
+    <tr>
+	    <td>
+				<img {{bindAttr src="beverage_type.image"}} width=48 height=48/>
+			</td>
+      <td>{{beverage_type.name}}</td>
+      <td>{{beverage_type.description}}</td>
+      <td>{{#linkTo "beverage_type" beverage_type}}view{{/linkTo}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+
+

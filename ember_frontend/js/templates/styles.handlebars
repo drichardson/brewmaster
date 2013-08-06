@@ -1,0 +1,28 @@
+<legend>Beverage Styles</legend>
+{{#linkTo "new_style" class="btn-spacing btn btn-small"}}New Beverage Style{{/linkTo}}
+<table class="table table-striped table-bordered">
+	<col style="width:48px">
+	<col>
+	<col>
+	<col>
+  <thead>
+	  <th>Image</th>
+    <th>Name</th>
+    <th>Description</th>
+  </thead>
+  <tbody>
+    {{#each beverage_style in controller}}
+    <tr>
+	    <td>
+				<img {{bindAttr src="style.image"}} width=48 height=48/>
+			</td>
+      <td>{{style.name}}</td>
+      <td>{{style.description}}</td>
+      <td>{{#linkTo "style" style}}view{{/linkTo}}</td>
+    </tr>
+    {{/each}}
+  </tbody>
+</table>
+
+
+
