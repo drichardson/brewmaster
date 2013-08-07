@@ -1,4 +1,4 @@
-TARGETS=gcd framebuffer_info framebuffer_draw
+TARGETS=gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw
 CFLAGS=-g -O0 -Wall -Werror
 CC=clang
 
@@ -12,6 +12,9 @@ framebuffer_info: framebuffer_info.c
 
 framebuffer_draw: framebuffer_draw.c
 	$(CC) $< $(CFLAGS) -o $@
+
+cairo_framebuffer_draw: cairo_framebuffer_draw.c
+	$(CC) -lcairo $< $(CFLAGS) -o $@
 
 clean:
 	$(RM) $(TARGETS)
