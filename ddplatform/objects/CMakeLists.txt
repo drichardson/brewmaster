@@ -14,9 +14,11 @@ set(CMAKE_CXX_COMPILER clang++)
 set(CMAKE_CXX_FLAGS "-Wall -Werror")
 set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g")
 
-add_library(objects STATIC DDObjectBase.h DDObjectBase.c DDOBjectDefinition.h DDObjectDefinition.c DDException.h DDException.c)
+include_directories(include)
 
-add_executable(unittest unittest.c)
+add_library(objects STATIC include/DDObjectBase.h src/DDObjectBase.c include/DDOBjectDefinition.h src/DDObjectDefinition.c include/DDException.h src/DDException.c)
+
+add_executable(unittest src/unittest.c)
 
 enable_testing()
 add_test(quicklook unittest)
