@@ -1,4 +1,4 @@
-TARGETS=gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw
+TARGETS=opengl_sdl gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw
 CFLAGS=-g -O0 -Wall -Werror
 CC=clang
 
@@ -15,6 +15,9 @@ framebuffer_draw: framebuffer_draw.c
 
 cairo_framebuffer_draw: cairo_framebuffer_draw.c
 	$(CC) -lcairo $< $(CFLAGS) -o $@
+
+opengl_sdl: opengl_sdl.c
+	$(CC) $< $(CFLAGS) -o $@ -lGL -lSDL -lGLU
 
 clean:
 	$(RM) $(TARGETS)
