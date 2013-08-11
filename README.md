@@ -11,7 +11,7 @@ the client browser.
 
 Configuring Raspberri Pi
 ------------------------
-- sudo apt-get install go vim git clang libdispatch-dev cmake libcairo2-dev
+- sudo apt-get install go vim git clang libdispatch-dev cmake libcairo2-dev libsdl1.2-dev
 - Use raspi-config to use the entire SD card
 - Your raspi should be booting to terminal. If it is
 booting to X, use raspi-config to change the boot behavior.
