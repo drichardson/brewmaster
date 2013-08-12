@@ -1,4 +1,4 @@
-TARGETS=opengl_raspi gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw
+TARGETS=openvc opengl_raspi gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw
 CFLAGS=-g -O0 -Wall -Werror
 CC=clang
 
@@ -30,5 +30,7 @@ BC_INCLUDES+=-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt
 opengl_raspi: opengl_raspi.c
 	$(CC) $(BC_INCLUDES) $(CFLAGS) $(BC_CFLAGS) $< -o $@ $(BC_LDFLAGS)
 	
+openvc: openvc.c tiger.c
+	$(CC) $(BC_INCLUDES) $(CFLAGS) $(BC_CFLAGS) tiger.c openvc.c -o $@ $(BC_LDFLAGS)
 clean:
 	$(RM) $(TARGETS)
