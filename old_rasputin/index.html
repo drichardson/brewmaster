@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en" data-framework="backbonejs">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<title>Backbone.js Brewmaster</title>
+		<!-- <link rel="stylesheet" href="bower_components/todomvc-common/base.css"> -->
+	</head>
+	<body>
+		<section id="brewmasterapp">
+			<header>
+				<h1>Brewmaster</h1>
+			<header>
+			<section id="main">
+				<ul id="beverage-list"></ul>
+			</section>
+			<section id="edit-beverage">
+			</section>
+		</section>
+		<script id="beverage-item-template" type="text/x-handlebars-template">
+			<div class="view">
+				<label><{{title}}</label>
+				<button class="destroy"></button>
+			</div>
+			<input class="edit" value={{title}}>
+		</script>
+		<script id="edit-beverage-template" type="text/x-handlebars-template">
+			<div class="view">
+				<label for="beverage-name">Name</label>
+				<input id="beverage-name" value={{title}}>
+			</div>
+			<div class="view">
+				<label for="brewery-name">Brewery</label>
+				<input id="brewery-name" value="brewery">
+			</div>
+			<button type="button" class="save">Save</button>
+		</script>
+		<script src="bower_components/jquery/jquery.js"></script>
+		<script src="bower_components/underscore/underscore.js"></script>
+		<script src="bower_components/handlebars/handlebars.js"></script>
+		<script src="bower_components/backbone/backbone.js"></script>
+		<script src="bower_components/backbone.stickit/backbone.stickit.js"></script>
+		<script src="bower_components/backbone.localStorage/backbone.localStorage.js"></script>
+		<script src="js/models/beverage.js"></script>
+		<script src="js/collections/beverages.js"></script>
+		<script src="js/views/app-view.js"></script>
+		<script src="js/views/beverage-item-view.js"></script>
+		<script src="js/views/edit-beverage-view.js"></script>
+		<script src="js/routers/router.js"></script>
+		<script src="js/app.js"></script>
+	</body>
+</html>
