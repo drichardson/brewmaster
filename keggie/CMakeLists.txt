@@ -6,7 +6,13 @@ project(keggie)
 
 set(CMAKE_BUILD_TYPE Debug)
 
-set(CMAKE_C_COMPILER /usr/bin/clang)
+# When I use clang, the assembler gives me a warning like this:
+# /tmp/main-dZdoda.s:419: Rd and Rm should be different in mul
+# This happens even if I set -march=armv6 or -mcpu=<blah> where
+# <blah> is try a bunch of different things the Internet suggests.
+# It still seems to work, mind you, but I'm going to use gcc for now
+# until I really need clang, for peace of mind.
+# set(CMAKE_C_COMPILER /usr/bin/clang)
 set(CMAKE_C_FLAGS "-Wall -Werror")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
