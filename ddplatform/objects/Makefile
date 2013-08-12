@@ -7,8 +7,8 @@ native:
 	cd "$(NATIVE_DIR)" && cmake ../..
 	cd "$(NATIVE_DIR)" && make
 
-test: native
-	cd "$(NATIVE_DIR)" && make test
+check: native
+	cd "$(NATIVE_DIR)" && make check
 
 xcode: 
 	[ -d "$(XCODE_DIR)" ] || mkdir -p "$(XCODE_DIR)"
