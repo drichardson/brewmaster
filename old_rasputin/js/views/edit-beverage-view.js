@@ -15,7 +15,11 @@ var app = app || {};
 		template: Handlebars.compile( $("#edit-beverage-template").html() ),
 
 		bindings: {
-	    '#beverage-name': 'title'
+	    '#beverage-name': 'name',
+			'#brewery-name': 'brewery',
+	    '#beverage-name': 'name',
+	    '#beverage-name': 'name',
+	    '#beverage-name': 'name',
 		},
 		
 		events: {

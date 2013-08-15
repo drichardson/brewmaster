@@ -4,17 +4,17 @@ var app = app || {};
 (function () {
 	'use strict';
 
-	// Beverage Model
+	// Beverage Type Model
 	// ----------
-	app.Beverage = Backbone.RelationalModel.extend({
+	app.BeverageType = Backbone.RelationalModel.extend({
 		
 		relations: [{
 			type: Backbone.HasMany,
-			key: 'tap_entries',
-			relatedModel: 'app.TapEntry',
-			collectionType: 'app.tapEntries',
+			key: 'beverages',
+			relatedModel: 'app.Beverage',
+			collectionType: 'app.beverages',
 			reverseRelation: {
-				key: 'beverage',
+				key: 'beverage_type',
 				includeInJSON: 'id'
 			}
 		}],
@@ -22,8 +22,6 @@ var app = app || {};
 		defaults: {
 			name: '',
 			image: '',
-			abv: -1,
-			ibu: -1
 		}
 	});
 })();
