@@ -2,11 +2,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#include "VG/openvg.h"
-#include "VG/vgu.h"
-#include "fontinfo.h"
-#include "shapes.h"
-#include "fonts/fonts.h"
+#include <beerkit/beerkit.h>
 
 static Fontinfo DefaultTypeface;
 

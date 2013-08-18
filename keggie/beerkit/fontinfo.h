@@ -1,4 +1,5 @@
 #pragma once
+#include <VG/openvg.h>
 
 typedef struct {
 	const short *CharacterMap;
