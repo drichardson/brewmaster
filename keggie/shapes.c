@@ -211,40 +211,12 @@ void init(int *w, int *h) {
 	bcm_host_init();
 	memset(state, 0, sizeof(*state));
 	oglinit(state);
-#if 0
-	SansTypeface = loadfont(DejaVuSans_glyphPoints,
-				DejaVuSans_glyphPointIndices,
-				DejaVuSans_glyphInstructions,
-				DejaVuSans_glyphInstructionIndices,
-				DejaVuSans_glyphInstructionCounts,
-				DejaVuSans_glyphAdvances, DejaVuSans_characterMap, DejaVuSans_glyphCount);
-
-	SerifTypeface = loadfont(DejaVuSerif_glyphPoints,
-				 DejaVuSerif_glyphPointIndices,
-				 DejaVuSerif_glyphInstructions,
-				 DejaVuSerif_glyphInstructionIndices,
-				 DejaVuSerif_glyphInstructionCounts,
-				 DejaVuSerif_glyphAdvances, DejaVuSerif_characterMap, DejaVuSerif_glyphCount);
-
-	MonoTypeface = loadfont(DejaVuSansMono_glyphPoints,
-				DejaVuSansMono_glyphPointIndices,
-				DejaVuSansMono_glyphInstructions,
-				DejaVuSansMono_glyphInstructionIndices,
-				DejaVuSansMono_glyphInstructionCounts,
-				DejaVuSansMono_glyphAdvances, DejaVuSansMono_characterMap, DejaVuSansMono_glyphCount);
-#endif
-
 	*w = state->screen_width;
 	*h = state->screen_height;
 }
 
 // finish cleans up
 void finish() {
-#if 0
-	unloadfont(SansTypeface.Glyphs, SansTypeface.Count);
-	unloadfont(SerifTypeface.Glyphs, SerifTypeface.Count);
-	unloadfont(MonoTypeface.Glyphs, MonoTypeface.Count);
-#endif
 	glClear(GL_COLOR_BUFFER_BIT);
 	eglSwapBuffers(state->display, state->surface);
 	eglMakeCurrent(state->display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);

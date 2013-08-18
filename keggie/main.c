@@ -102,78 +102,14 @@ void *eventThread(void *arg) {
 	}
 }
 
-static int cur_sx, cur_sy, cur_w, cur_h;	// cursor location and dimensions
-static int cur_saved = 0;	// amount of data saved in cursor image backup
-
-// saveCursor saves the pixels under the mouse cursor
-void saveCursor(VGImage CursorBuffer, int curx, int cury, int screen_width, int screen_height, int s) {
-	int sx, sy, ex, ey;
-
-	sx = curx - s;					   // horizontal 
-	if (sx < 0) {
-		sx = 0;
-	}
-	ex = curx + s;
-	if (ex > screen_width) {
-		ex = screen_width;
-	}
-	cur_sx = sx;
-	cur_w = ex - sx;
-
-	sy = cury - s;					   // vertical 
-	if (sy < 0) {
-		sy = 0;
-	}
-	ey = cury + s;
-	if (ey > screen_height) {
-		ey = screen_height;
-	}
-	cur_sy = sy;
-	cur_h = ey - sy;
-
-	vgGetPixels(CursorBuffer, 0, 0, cur_sx, cur_sy, cur_w, cur_h);
-	cur_saved = cur_w * cur_h;
-}
-
-// restoreCursor restores the pixels under the mouse cursor
-void restoreCursor(VGImage CursorBuffer) {
-	if (cur_saved != 0) {
-		vgSetPixels(cur_sx, cur_sy, CursorBuffer, 0, 0, cur_w, cur_h);
-	}
-}
-
-// circleCursor draws a translucent circle as the mouse cursor
-void circleCursor(int curx, int cury, int width, int height, int s) {
-	Fill(100, 0, 0, 0.50);
-	Circle(curx, cury, s);
-	Fill(0, 0, 0, 1);
-	Circle(curx, cury, 2);
-}
-
-// mouseinit starts the mouse event thread
-int mouseinit(int w, int h) {
-	pthread_t inputThread;
-	mouse.max_x = w;
-	mouse.max_y = h;
-	return pthread_create(&inputThread, NULL, &eventThread, NULL);
-}
-
 int main() {
-	int width, height, cursorx, cursory, cbsize;
+	int width, height;
 
 	init(&width, &height);				   // Graphics initialization
     //DefaultTypeface = load_DejaVuSans();
     DefaultTypeface = load_HelveticaNeueDeskUI();
-	cursorx = width / 2;
-	cursory = height / 2;
-	cbsize = (CUR_SIZ * 2) + 1;
-	VGImage CursorBuffer = vgCreateImage(VG_sABGR_8888, cbsize, cbsize, VG_IMAGE_QUALITY_BETTER);
 
-	if (mouseinit(width, height) != 0) {
-		fprintf(stderr, "Unable to initialize the mouse\n");
-		exit(1);
-	}
-	Start(width, height);				   // Start the picture
+    Start(width, height);				   // Start the picture
 	Background(0, 0, 0);				   // Black background
 	Fill(44, 77, 232, 1);				   // Big blue marble
 	Circle(width / 2, 0, width);			   // The "world"
@@ -181,20 +117,8 @@ int main() {
 	TextMid(width / 2, height / 2, "hello, world", DefaultTypeface, width / 10);	// Greetings 
 	End();						   // update picture
 
-	// MAIN LOOP
-	while (left_count < 2) {			   // Loop until the left mouse button pressed & released
-		// if the mouse moved...
-		if (mouse.x != cursorx || mouse.y != cursory) {
-			restoreCursor(CursorBuffer);
-			cursorx = mouse.x;
-			cursory = mouse.y;
-			saveCursor(CursorBuffer, cursorx, cursory, width, height, CUR_SIZ);
-			circleCursor(cursorx, cursory, width, height, CUR_SIZ);
-			End();				   // update picture
-		}
-	}
-	restoreCursor(CursorBuffer);			   // not strictly necessary as display will be closed
-	vgDestroyImage(CursorBuffer);			   // tidy up memory
+    sleep(2);
+
 	finish();					   // Graphics cleanup
 	exit(0);
 }
