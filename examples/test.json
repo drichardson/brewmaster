@@ -1,0 +1,7 @@
+{
+    "string" : "this is a test",
+    "number" : 123,
+    "object" : { "name" : "doug" },
+    "array" : [1, "two", true, null, "five"]
+}
+
