@@ -102,11 +102,16 @@ void *eventThread(void *arg) {
 	}
 }
 
+void init_simulating_sainsmart_display(int *w, int *h) {
+    init(w, h);
+    *w = 240;
+    *h = 320;
+}
+
 int main() {
 	int width, height;
 
-	init(&width, &height);				   // Graphics initialization
-    //DefaultTypeface = load_DejaVuSans();
+	init_simulating_sainsmart_display(&width, &height);	// Graphics initialization
     DefaultTypeface = load_HelveticaNeueDeskUI();
 
     Start(width, height);				   // Start the picture
