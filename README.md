@@ -11,7 +11,7 @@ the client browser.
 
 Configuring Raspberri Pi
 ------------------------
-- sudo apt-get install go vim git clang libdispatch-dev cmake libjansson-dev
+- sudo apt-get install go vim git clang libdispatch-dev cmake libjansson-dev libcurl4-nss-dev
 - optional packages (for examples and vim): cscope libcairo2-dev 
 - Use raspi-config to use the entire SD card
 - Your raspi should be booting to terminal. If it is

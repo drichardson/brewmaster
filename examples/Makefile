@@ -1,4 +1,4 @@
-TARGETS=openvc opengl_raspi gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw parse_json
+TARGETS=openvc opengl_raspi gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw parse_json url_request
 CFLAGS=-g -O0 -Wall -Werror
 
 all: $(TARGETS)
@@ -17,6 +17,9 @@ cairo_framebuffer_draw: cairo_framebuffer_draw.c
 
 parse_json: parse_json.c
 	clang -ljansson $< $(CFLAGS) -o $@
+	
+url_request: url_request.c
+	$(CC) -std=c99 -lcurl $< $(CFLAGS) -o $@
 	
 # Extra C flags added to support Broadcom specific shit. See:
 # /opt/vc/src/hello_pi/hello_triangle2
