@@ -10,7 +10,7 @@ var app = app || {};
 	var Beverages = Backbone.Collection.extend({
 		// Reference to this collection's model.
 		model: app.Beverage,
-
+		
 		localStorage: new Backbone.LocalStorage('beverages-backbone'),
 
 		// // We keep the Todos in sequential order, despite being saved by unordered

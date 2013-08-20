@@ -2,32 +2,114 @@
 var app = app || {};
 
 (function () {
-	'use strict';
+	// 'use strict';
 
-	// Todo Router
 	// ----------
 	var BrewmasterRouter = Backbone.Router.extend({
 		routes: {
-			"beverages" : "listAllBeverages",
-			"beverage/new" : "newBeverage",
-			"beverage/:id" : "getBeverage"
-			},
+			"beverage/new"						: "newModelInstance",
+			"beverage/:id"						: "getModelInstance",
+			"beverage/:id/edit"				: "editModelInstance",
+			"beverages"								: "listCollection",
 			
-			listAllBeverages: function() {
-				console.log("List all beverages");
-			},
+			"beverage-style/new"			: "newModelInstance",
+			"beverage-style/:id"			: "getModelInstance",
+			"beverage-style/:id/edit" : "editModelInstance",
+			"beverage-styles"					: "listCollection",
 			
-			getBeverage: function(id) {
-				console.log("Getting beverage for id " + id);
-			},
+			"beverage-type/new"				: "newModelInstance",
+			"beverage-type/:id"	      : "getModelInstance",
+			"beverage-type/:id/edit"	: "editModelInstance",
+			"beverage-types"          : "listCollection",
 			
-			newBeverage: function() {
-				var newModel = new app.Beverage({
-					title: "New Beverage"
-				});
-				app.current_beverage = newModel;
-				console.log("Create new beverage");
-			}
+			"keg-type/new"						: "newModelInstance",
+			"keg-type/:id"	          : "getModelInstance",
+			"keg-type/:id/edit"				: "editModelInstance",
+			"keg-types"               : "listCollection",
+
+			"producer/new"						: "newModelInstance",
+			"producer/:id"						: "getModelInstance",
+			"producer/:id/edit"				: "editModelInstance",
+			"producers"     					: "listCollection",
+			
+			"tap-entry/new"						: "newModelInstance",  	
+			"tap-entry/:id"						: "getModelInstance",
+			"tap-entry/:id/edit"			: "editModelInstance",
+			"tap-entries"							: "listCollection",
+			
+			"settings"								: "getModelInstance",
+			"settings/edit"						: "editModelInstance",
+		},
+		
+		_collectionForRouteName: {
+			"beverage"				: app.beverages,
+			"beverages"				: app.beverages,
+			"beverage-style"	: app.beverageStyles,
+			"beverage-styles"	: app.beverageStyles,
+			"beverage-type"		: app.beverageTypes,
+			"beverage-types"	: app.beverageTypes,
+			"keg-type"				: app.kegTypes,
+			"keg-types"				: app.kegTypes,
+			"producer"				: app.producers,
+			"producers"				: app.producers,
+			"tap-entry"				: app.tapEntries,
+			"tap-entries"			: app.tapEntries,
+			"settings"				: app.settings
+		},
+		
+		// *** Relational handlers ***
+		newModelInstance: function() {
+			var base = Backbone.history.fragment.split('/')[0];
+			var collection = this._collectionForRouteName[base];
+			var model = collection.model;
+			var modelInstance = new model();	
+			
+			app.currentState = {
+				'collection' 		: collection,
+				'instance'			: modelInstance,
+				'isEditing'			: true,
+				'isCollection'	: false
+			};
+		},
+		
+		getModelInstance: function(id) {
+			var base = Backbone.history.fragment.split('/')[0];
+			var collection = this._collectionForRouteName[base];
+			var modelInstance = collection.get(id);
+			
+			app.currentState = {
+				'collection' 		: collection,
+				'instance'			: modelInstance,
+				'isEditing'			: false,
+				'isCollection'	: false
+			};		
+		},
+		
+		editModelInstance: function(id) {
+			var base = Backbone.history.fragment.split('/')[0];
+			var collection = this._collectionForRouteName[base];
+			var modelInstance = collection.get(id);
+			
+			app.currentState = {
+				'collection' 		: collection,
+				'instance'			: modelInstance,
+				'isEditing'			: true,
+				'isCollection'	: false
+			};
+		},
+		
+		listCollection: function() {
+			var base = Backbone.history.fragment.split('/')[0];
+			var collection = this._collectionForRouteName[base];
+			
+			app.currentState = {
+				'collection' 		: collection,
+				'instance'			: collection,
+				'isEditing'			: false,
+				'isCollection'	: true
+			};
+		}
+
 	});
 
 	app.BrewmasterRouter = new BrewmasterRouter();

@@ -18,7 +18,7 @@ var app = app || {};
 		events: {
 			'keypress #new-todo': 'createOnEnter',
 			'click #clear-completed': 'clearCompleted',
-			'click #toggle-all': 'toggleAllComplete'
+			'click #toggle-all': 'toggleAllComplete',
 		},
 
 		// At initialization we bind to the relevant events on the `Todos`
@@ -31,12 +31,20 @@ var app = app || {};
 			// this.$main = this.$('#main');
 
 			this.listenTo(app.beverages, 'add', this.addOne);		
+			this.listenTo(app.BrewmasterRouter, 'route', this.routeChanged);
+			
+			// TODO: load the initial state here and redraw. The router is initialized before this so we don't get the event
 			
 			app.beverages.fetch();
 			
 			var testBeverage = new app.Beverage({ title: "Beverage 1"});
 			var view = new app.EditBeverageView({ model: testBeverage });
 			$('#edit-beverage').append(view.render().el);
+		},
+		
+		routeChanged: function(route) {
+			app.state['model']
+			console.log("View updated route to " + route)
 		},
 
 		// Add a single beverage item to the list by creating a view for it, and

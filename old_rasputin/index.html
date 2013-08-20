@@ -24,17 +24,24 @@
 			</div>
 			<input class="edit" value={{title}}>
 		</script>
+		
 		<script id="edit-beverage-template" type="text/x-handlebars-template">
 			<div class="view">
 				<label for="beverage-name">Name</label>
-				<input id="beverage-name" value={{title}}>
+				<input id="beverage-name">
 			</div>
 			<div class="view">
-				<label for="brewery-name">Brewery</label>
-				<input id="brewery-name" value="brewery">
+			</div>	
+				<label for="beverage-ibu">IBU</label>
+				<input id="beverage-ibu">
+			</div>
+			<div class="view">
+				<label for="beverage-abv">ABV</label>
+				<input id="beverage-abv">
 			</div>
 			<button type="button" class="save">Save</button>
 		</script>
+		
 		<script src="bower_components/jquery/jquery.js"></script>
 		<script src="bower_components/underscore/underscore.js"></script>
 		<script src="bower_components/handlebars/handlebars.js"></script>

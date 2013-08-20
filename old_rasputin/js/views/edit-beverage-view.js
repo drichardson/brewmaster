@@ -15,11 +15,9 @@ var app = app || {};
 		template: Handlebars.compile( $("#edit-beverage-template").html() ),
 
 		bindings: {
-	    '#beverage-name': 'name',
-			'#brewery-name': 'brewery',
-	    '#beverage-name': 'name',
-	    '#beverage-name': 'name',
-	    '#beverage-name': 'name',
+			'#beverage-name': 'name',
+			'#beverage-ibu': 'ibu',
+			'#beverage-abv': 'abv'
 		},
 		
 		events: {
