@@ -67,6 +67,7 @@ var app = app || {};
 			app.currentState = {
 				'collection' 		: collection,
 				'instance'			: modelInstance,
+				'modelName'			: base,
 				'isEditing'			: true,
 				'isCollection'	: false
 			};
@@ -80,6 +81,7 @@ var app = app || {};
 			app.currentState = {
 				'collection' 		: collection,
 				'instance'			: modelInstance,
+				'modelName'			: base,
 				'isEditing'			: false,
 				'isCollection'	: false
 			};		
@@ -93,6 +95,7 @@ var app = app || {};
 			app.currentState = {
 				'collection' 		: collection,
 				'instance'			: modelInstance,
+				'modelName'			: base,
 				'isEditing'			: true,
 				'isCollection'	: false
 			};
@@ -105,6 +108,7 @@ var app = app || {};
 			app.currentState = {
 				'collection' 		: collection,
 				'instance'			: collection,
+				'modelName'			: base,
 				'isEditing'			: false,
 				'isCollection'	: true
 			};

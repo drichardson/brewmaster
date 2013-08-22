@@ -37,14 +37,41 @@ var app = app || {};
 			
 			app.beverages.fetch();
 			
-			var testBeverage = new app.Beverage({ title: "Beverage 1"});
-			var view = new app.EditBeverageView({ model: testBeverage });
-			$('#edit-beverage').append(view.render().el);
+			// var testBeverage = new app.Beverage({ title: "Beverage 1"});
+			// var view = new app.EditBeverageView({ model: testBeverage });
+			// $('#edit-beverage').append(view.render().el);
+			
+			// Set the initial route
+			this._updateRoute();
+		},
+		
+		_viewForModelName: {
+			'beverage'				: app.BeverageView,
+			'beverages' 			: app.BeveragesView,
+			'beverage-style' 	: 'beverage-style-view',
+			'beverage-styles' : 'beverage-styles-view',
+			'beverage-type'		: 'beverage-type-view',
+			'beverage-types'	: 'beverage-types-view',
+			'keg-type'				: 'keg-type-view',
+			'keg-types'				: 'keg-types-view',
+			'producer'				: 'producer-view',
+			'producers'				: 'producers-view',
+			'tap-entry'				: 'tap-entry-view',
+			'tap-entries'			: 'tap-entries-view'
 		},
 		
 		routeChanged: function(route) {
-			app.state['model']
-			console.log("View updated route to " + route)
+			console.log("Route changed: " + route);
+			this._updateRoute();
+		},
+		
+		_updateRoute: function() {
+				var viewProto = this._viewForModelName[app.currentState['modelName']];
+				var view = new viewProto({ model : app.currentState['instance'] });
+				// TODO: remove current view
+				$('#main').empty();
+				$('#main').append(view.render().el);
+				console.log("Updated Main View");
 		},
 
 		// Add a single beverage item to the list by creating a view for it, and

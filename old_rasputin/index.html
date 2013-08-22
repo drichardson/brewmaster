@@ -25,6 +25,23 @@
 			<input class="edit" value={{title}}>
 		</script>
 		
+		<script id="beverage-template" type="text/x-handlebars-template">
+			<div class="view">
+				<label for="name">Name</label>
+				<input id="name">
+			</div>
+			<div class="view">
+			</div>	
+				<label for="ibu">IBU</label>
+				<input id="ibu">
+			</div>
+			<div class="view">
+				<label for="abv">ABV</label>
+				<input id="abv">
+			</div>
+			<button type="button" class="save">Save</button>
+		</script>
+		
 		<script id="edit-beverage-template" type="text/x-handlebars-template">
 			<div class="view">
 				<label for="beverage-name">Name</label>
@@ -51,9 +68,10 @@
 		<script src="bower_components/backbone.localStorage/backbone.localStorage.js"></script>
 		<script src="js/models/beverage.js"></script>
 		<script src="js/collections/beverages.js"></script>
-		<script src="js/views/app-view.js"></script>
+		<script src="js/views/beverage-view.js"></script>
 		<script src="js/views/beverage-item-view.js"></script>
 		<script src="js/views/edit-beverage-view.js"></script>
+		<script src="js/views/app-view.js"></script>
 		<script src="js/routers/router.js"></script>
 		<script src="js/app.js"></script>
 	</body>
