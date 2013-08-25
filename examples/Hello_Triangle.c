@@ -128,6 +128,10 @@ static int Init (raspi_opengl_state_t *state)
     glAttachShader ( programObject, vertexShader );
     glAttachShader ( programObject, fragmentShader );
 
+    // Won't be deleted until program is deleted.
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader);
+
     // Bind vPosition to attribute 0   
     glBindAttribLocation ( programObject, 0, "vPosition" );
 
