@@ -42,7 +42,7 @@ egl: egl.c
 	$(CC) $(BC_INCLUDES) $< $(CFLAGS) -o $@ $(BC_LDFLAGS)
 
 
-Hello_Triangle: Hello_Triangle.c esUtil.c
+Hello_Triangle: Hello_Triangle.c
 	$(CC) $(BC_INCLUDES) $^ $(CFLAGS) -o $@ $(BC_LDFLAGS) -lX11
 
 

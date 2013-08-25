@@ -16,20 +16,36 @@
 //    example is to demonstrate the basic concepts of 
 //    OpenGL ES 2.0 rendering.
 #include <stdlib.h>
-#include "esUtil.h"
+#include <stdio.h>
+#include <assert.h>
+
+#include "GLES2/gl2.h"
+#include "EGL/egl.h"
+//#include "EGL/eglext.h"
+
+#include "bcm_host.h"
+
+
+#define check_gl() assert(glGetError() == 0)
 
 typedef struct
 {
-    // Handle to a program object
-    GLuint programObject;
+   uint32_t screen_width;
+   uint32_t screen_height;
+// OpenGL|ES objects
+   EGLDisplay display;
+   EGLSurface surface;
+   EGLContext context;
+   GLuint programObject;
+} raspi_opengl_state_t;
 
-} UserData;
+
 
 ///
 // Create a shader object, load the shader source, and
 // compile the shader.
 //
-GLuint LoadShader ( GLenum type, const char *shaderSrc )
+static GLuint LoadShader ( GLenum type, const char *shaderSrc )
 {
     GLuint shader;
     GLint compiled;
@@ -60,7 +76,7 @@ GLuint LoadShader ( GLenum type, const char *shaderSrc )
             char* infoLog = malloc (sizeof(char) * infoLen );
 
             glGetShaderInfoLog ( shader, infoLen, NULL, infoLog );
-            esLogMessage ( "Error compiling shader:\n%s\n", infoLog );            
+            printf ( "Error compiling shader:\n%s\n", infoLog );            
 
             free ( infoLog );
         }
@@ -76,11 +92,8 @@ GLuint LoadShader ( GLenum type, const char *shaderSrc )
 ///
 // Initialize the shader and program object
 //
-int Init ( ESContext *esContext )
+static int Init (raspi_opengl_state_t *state) 
 {
-    esContext->userData = malloc(sizeof(UserData));
-
-    UserData *userData = esContext->userData;
     char const vShaderStr[] =  
         "attribute vec4 vPosition;    \n"
         "void main()                  \n"
@@ -108,7 +121,7 @@ int Init ( ESContext *esContext )
     programObject = glCreateProgram ( );
 
     if ( programObject == 0 ) {
-        esLogMessage("glCreateProgram failed\n");
+        printf("glCreateProgram failed\n");
         return 0;
     }
 
@@ -135,7 +148,7 @@ int Init ( ESContext *esContext )
             char* infoLog = malloc (sizeof(char) * infoLen );
 
             glGetProgramInfoLog ( programObject, infoLen, NULL, infoLog );
-            esLogMessage ( "Error linking program:\n%s\n", infoLog );            
+            printf ( "Error linking program:\n%s\n", infoLog );            
 
             free ( infoLog );
         }
@@ -145,30 +158,29 @@ int Init ( ESContext *esContext )
     }
 
     // Store the program object
-    userData->programObject = programObject;
+    state->programObject = programObject;
 
-    glClearColor ( 0.0f, 0.0f, 0.0f, 0.0f );
     return GL_TRUE;
 }
 
 ///
 // Draw a triangle using the shader pair created in Init()
 //
-void Draw ( ESContext *esContext )
+void Draw ( raspi_opengl_state_t* state )
 {
-    UserData *userData = esContext->userData;
     GLfloat vVertices[] = {  0.0f,  0.5f, 0.0f, 
         -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f };
 
+    printf("Drawing %dx%d\n", state->screen_width, state->screen_height);
     // Set the viewport
-    glViewport ( 0, 0, esContext->width, esContext->height );
+    glViewport ( 0, 0, state->screen_width, state->screen_height );
 
     // Clear the color buffer
     glClear ( GL_COLOR_BUFFER_BIT );
 
     // Use the program object
-    glUseProgram ( userData->programObject );
+    glUseProgram ( state->programObject );
 
     // Load the vertex data
     glVertexAttribPointer ( 0, 3, GL_FLOAT, GL_FALSE, 0, vVertices );
@@ -177,23 +189,133 @@ void Draw ( ESContext *esContext )
     glDrawArrays ( GL_TRIANGLES, 0, 3 );
 }
 
+
+/***********************************************************
+ * Name: init_ogl
+ *
+ * Arguments:
+ *       CUBE_STATE_T *state - holds OGLES model info
+ *
+ * Description: Sets the display, OpenGL|ES context and screen stuff
+ *
+ * Returns: void
+ *
+ ***********************************************************/
+static void init_ogl(raspi_opengl_state_t *state)
+{
+   int32_t success = 0;
+   EGLBoolean result;
+   EGLint num_config;
+
+   static EGL_DISPMANX_WINDOW_T nativewindow;
+
+   DISPMANX_ELEMENT_HANDLE_T dispman_element;
+   DISPMANX_DISPLAY_HANDLE_T dispman_display;
+   DISPMANX_UPDATE_HANDLE_T dispman_update;
+   VC_RECT_T dst_rect;
+   VC_RECT_T src_rect;
+
+   static const EGLint attribute_list[] =
+   {
+      EGL_RED_SIZE, 8,
+      EGL_GREEN_SIZE, 8,
+      EGL_BLUE_SIZE, 8,
+      EGL_ALPHA_SIZE, 8,
+      EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
+      EGL_NONE
+   };
+   
+   static const EGLint context_attributes[] = 
+   {
+      EGL_CONTEXT_CLIENT_VERSION, 2,
+      EGL_NONE
+   };
+   EGLConfig config;
+
+   // get an EGL display connection
+   state->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+   assert(state->display!=EGL_NO_DISPLAY);
+   check_gl();
+
+   // initialize the EGL display connection
+   result = eglInitialize(state->display, NULL, NULL);
+   assert(EGL_FALSE != result);
+   check_gl();
+
+   // get an appropriate EGL frame buffer configuration
+   result = eglChooseConfig(state->display, attribute_list, &config, 1, &num_config);
+   assert(EGL_FALSE != result);
+   check_gl();
+
+   // get an appropriate EGL frame buffer configuration
+   result = eglBindAPI(EGL_OPENGL_ES_API);
+   assert(EGL_FALSE != result);
+   check_gl();
+
+   // create an EGL rendering context
+   state->context = eglCreateContext(state->display, config, EGL_NO_CONTEXT, context_attributes);
+   assert(state->context!=EGL_NO_CONTEXT);
+   check_gl();
+
+   // create an EGL window surface
+   success = graphics_get_display_size(0 /* LCD */, &state->screen_width, &state->screen_height);
+   assert( success >= 0 );
+
+   dst_rect.x = 0;
+   dst_rect.y = 0;
+   dst_rect.width = state->screen_width;
+   dst_rect.height = state->screen_height;
+      
+   src_rect.x = 0;
+   src_rect.y = 0;
+   src_rect.width = state->screen_width << 16;
+   src_rect.height = state->screen_height << 16;        
+
+   dispman_display = vc_dispmanx_display_open( 0 /* LCD */);
+   dispman_update = vc_dispmanx_update_start( 0 );
+         
+   dispman_element = vc_dispmanx_element_add ( dispman_update, dispman_display,
+      0/*layer*/, &dst_rect, 0/*src*/,
+      &src_rect, DISPMANX_PROTECTION_NONE, 0 /*alpha*/, 0/*clamp*/, 0/*transform*/);
+      
+   nativewindow.element = dispman_element;
+   nativewindow.width = state->screen_width;
+   nativewindow.height = state->screen_height;
+   vc_dispmanx_update_submit_sync( dispman_update );
+      
+   check_gl();
+
+   state->surface = eglCreateWindowSurface( state->display, config, &nativewindow, NULL );
+   assert(state->surface != EGL_NO_SURFACE);
+   check_gl();
+
+   // connect the context to the surface
+   result = eglMakeCurrent(state->display, state->surface, state->surface, state->context);
+   assert(EGL_FALSE != result);
+   check_gl();
+
+   // Set background color and clear buffers
+   glClearColor(1, 1, 1, 1);
+   glClear( GL_COLOR_BUFFER_BIT );
+
+   check_gl();
+}
+
+
 int main ( int argc, char *argv[] )
 {
+    bcm_host_init();
 
-    ESContext esContext;
-    UserData  userData;
+    raspi_opengl_state_t state;
+    memset(&state, 0, sizeof(state));
+    init_ogl(&state);
 
-    esInitContext ( &esContext );
-    esContext.userData = &userData;
-
-    esCreateWindow ( &esContext, "Hello Triangle", 320, 240, ES_WINDOW_RGB );
-
-    if ( !Init ( &esContext ) )
+    if ( !Init ( &state ) )
         return 0;
 
-    esRegisterDrawFunc ( &esContext, Draw );
-
-    esMainLoop ( &esContext );
-
+    Draw(&state);
+    sleep(2);
+    
     return 0;
 }
+
