@@ -187,6 +187,9 @@ void Draw ( raspi_opengl_state_t* state )
     glEnableVertexAttribArray ( 0 );
 
     glDrawArrays ( GL_TRIANGLES, 0, 3 );
+    check_gl();
+
+    eglSwapBuffers(state->display, state->surface);
 }
 
 
