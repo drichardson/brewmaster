@@ -25,12 +25,7 @@ var app = app || {};
 		// collection, when items are added or changed. Kick things off by
 		// loading any preexisting todos that might be saved in *localStorage*.
 		initialize: function () {
-			// this.allCheckbox = this.$('#toggle-all')[0];
-			// this.$input = this.$('#new-beverage');
-			// this.$footer = this.$('#footer');
-			// this.$main = this.$('#main');
 
-			this.listenTo(app.beverages, 'add', this.addOne);		
 			this.listenTo(app.BrewmasterRouter, 'route', this.routeChanged);
 			
 			// TODO: load the initial state here and redraw. The router is initialized before this so we don't get the event
@@ -45,32 +40,25 @@ var app = app || {};
 			this._updateRoute();
 		},
 		
-		_viewForModelName: {
-			'beverage'				: app.BeverageView,
-			'beverages' 			: app.BeveragesView,
-			'beverage-style' 	: 'beverage-style-view',
-			'beverage-styles' : 'beverage-styles-view',
-			'beverage-type'		: 'beverage-type-view',
-			'beverage-types'	: 'beverage-types-view',
-			'keg-type'				: 'keg-type-view',
-			'keg-types'				: 'keg-types-view',
-			'producer'				: 'producer-view',
-			'producers'				: 'producers-view',
-			'tap-entry'				: 'tap-entry-view',
-			'tap-entries'			: 'tap-entries-view'
-		},
-		
 		routeChanged: function(route) {
 			console.log("Route changed: " + route);
 			this._updateRoute();
 		},
 		
 		_updateRoute: function() {
-				var viewProto = this._viewForModelName[app.currentState['modelName']];
-				var view = new viewProto({ model : app.currentState['instance'] });
-				// TODO: remove current view
-				$('#main').empty();
-				$('#main').append(view.render().el);
+				
+				if (app.currentState['isCollection']) {
+					// render list template
+				} else {
+					var view = new app.FormView({ 
+						model: app.currentState['instance'],
+						collection: app.currentState['collection'],
+						isEditing: app.currentState['isEditing']
+					});
+					
+					$('#main').html(view.render().el)
+				}
+								
 				console.log("Updated Main View");
 		},
 

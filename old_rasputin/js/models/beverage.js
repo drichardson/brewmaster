@@ -12,7 +12,7 @@ var app = app || {};
 			type: Backbone.HasMany,
 			key: 'tap_entries',
 			relatedModel: 'app.TapEntry',
-			collectionType: 'app.tapEntries',
+			collectionType: 'app.TapEntries',
 			reverseRelation: {
 				key: 'beverage',
 				includeInJSON: 'id'
@@ -22,8 +22,20 @@ var app = app || {};
 		defaults: {
 			name: '',
 			image: '',
-			abv: -1,
-			ibu: -1
+			abv: 0,
+			ibu: 0
+		},
+		
+		initialize: function() {
+			this.schema = {
+				image: 	'Image', 
+				name:		'Text',
+				producer: { type: 'NestedModel', model: app.Producer },
+				beverageType: { type: 'NestedModel', model: app.BeverageType },
+				beverageStyle: { type: 'NestedModel', model: app.BeverageStyle },
+				abv:		'Number',
+				ibu:		'Number'
+			};
 		}
 	});
 })();

@@ -8,33 +8,33 @@ var app = app || {};
 	var BrewmasterRouter = Backbone.Router.extend({
 		routes: {
 			"beverage/new"						: "newModelInstance",
-			"beverage/:id"						: "getModelInstance",
 			"beverage/:id/edit"				: "editModelInstance",
+			"beverage/:id"						: "getModelInstance",
 			"beverages"								: "listCollection",
 			
 			"beverage-style/new"			: "newModelInstance",
-			"beverage-style/:id"			: "getModelInstance",
 			"beverage-style/:id/edit" : "editModelInstance",
+			"beverage-style/:id"			: "getModelInstance",
 			"beverage-styles"					: "listCollection",
 			
 			"beverage-type/new"				: "newModelInstance",
-			"beverage-type/:id"	      : "getModelInstance",
 			"beverage-type/:id/edit"	: "editModelInstance",
+			"beverage-type/:id"	      : "getModelInstance",
 			"beverage-types"          : "listCollection",
 			
 			"keg-type/new"						: "newModelInstance",
-			"keg-type/:id"	          : "getModelInstance",
 			"keg-type/:id/edit"				: "editModelInstance",
+			"keg-type/:id"	          : "getModelInstance",
 			"keg-types"               : "listCollection",
 
 			"producer/new"						: "newModelInstance",
-			"producer/:id"						: "getModelInstance",
 			"producer/:id/edit"				: "editModelInstance",
+			"producer/:id"						: "getModelInstance",
 			"producers"     					: "listCollection",
 			
-			"tap-entry/new"						: "newModelInstance",  	
-			"tap-entry/:id"						: "getModelInstance",
+			"tap-entry/new"						: "newModelInstance",
 			"tap-entry/:id/edit"			: "editModelInstance",
+			"tap-entry/:id"						: "getModelInstance",
 			"tap-entries"							: "listCollection",
 			
 			"settings"								: "getModelInstance",
@@ -55,6 +55,16 @@ var app = app || {};
 			"tap-entry"				: app.tapEntries,
 			"tap-entries"			: app.tapEntries,
 			"settings"				: app.settings
+		},
+		
+		initialize: function() {
+			app.currentState = {};
+			
+			// TODO: Hack.  These should probably be lazily loaded
+			for ( key in this._collectionForRouteName ) {
+				this._collectionForRouteName[key].fetch();
+			}
+			
 		},
 		
 		// *** Relational handlers ***

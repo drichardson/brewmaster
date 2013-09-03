@@ -6,8 +6,7 @@ var app = app || {};
 
 	// Tap Entry Collection
 	// ---------------
-
-	var TapEntries = Backbone.Collection.extend({
+	app.TapEntries = Backbone.Collection.extend({
 		// Reference to this collection's model.
 		model: app.TapEntry,
 
@@ -16,5 +15,5 @@ var app = app || {};
 	});
 
 	// Create our global collection of **Tap Entries**.
-	app.tapEntries = new TapEntries();
+	app.tapEntries = new app.TapEntries();
 })();

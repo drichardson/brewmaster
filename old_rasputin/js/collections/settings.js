@@ -7,7 +7,7 @@ var app = app || {};
 	// Tap Entry Collection
 	// ---------------
 
-	var Settings = Backbone.Collection.extend({
+	app.Settings = Backbone.Collection.extend({
 		// Reference to this collection's model.
 		model: app.Settings,
 
@@ -16,5 +16,5 @@ var app = app || {};
 	});
 
 	// Create our global collection of **Settings* (there should only be one).
-	app.settings = new Settings();
+	app.settings = new app.Settings();
 })();

@@ -10,9 +10,18 @@ var app = app || {};
 		
 		defaults: {
 			name: '',
-			active: NO,
+			active: false,
 			date_added: new Date(0),
 			date_removed: new Date(0)
+		},
+				
+		initialize: function() {
+			this.schema = {
+				name:					'Text',
+				active: 			'Checkbox', 
+				date_added: 	'Date', 
+				date_removed:	'Date'
+			}
 		}
 	});
 })();

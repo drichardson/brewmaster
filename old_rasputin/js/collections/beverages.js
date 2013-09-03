@@ -7,7 +7,7 @@ var app = app || {};
 	// Beverage Collection
 	// ---------------
 
-	var Beverages = Backbone.Collection.extend({
+	app.Beverages = Backbone.Collection.extend({
 		// Reference to this collection's model.
 		model: app.Beverage,
 		
@@ -29,5 +29,5 @@ var app = app || {};
 	});
 
 	// Create our global collection of **Beverages**.
-	app.beverages = new Beverages();
+	app.beverages = new app.Beverages();
 })();
