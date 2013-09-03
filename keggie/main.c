@@ -1,12 +1,16 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <assert.h>
+#include <sys/mman.h>
+#include <fcntl.h>
+#include <sys/stat.h>
 
 #include "GLES2/gl2.h"
 #include "EGL/egl.h"
 
 #include "bcm_host.h"
 
+#include "texture_loader.h"
 
 #define check_gl() assert(glGetError() == 0)
 
@@ -19,6 +23,8 @@ typedef struct
    EGLSurface surface;
    EGLContext context;
    GLuint programObject;
+   GLuint toolbarBackgroundTexture;
+   GLuint vPositionAttribute;
 } raspi_opengl_state_t;
 
 
@@ -71,33 +77,58 @@ static GLuint LoadShader ( GLenum type, const char *shaderSrc )
 
 }
 
+static GLuint LoadShaderFromFile(GLenum shaderType, const char* filename)
+{
+    int fd = open(filename, O_RDONLY);
+    if (fd == -1) {
+        fprintf(stderr, "Couldn't open shader at %s. %d: %s\n", filename, errno, strerror(errno));
+        return 0;
+    }
+
+    struct stat statbuf;
+    if (fstat(fd, &statbuf) == -1) {
+        fprintf(stderr, "Couldn't get stat info for %s\n", filename);
+        close(fd);
+        return 0;
+    }
+
+    printf("mmap args size = %lld\n", (long long int)statbuf.st_size);
+    char* shader_source = mmap(NULL, statbuf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
+    printf("mmap returned %p\n", shader_source);
+    if (shader_source == MAP_FAILED) {
+        fprintf(stderr, "mmap failed to map file %s. %d: %s\n", filename, errno, strerror(errno));
+        close(fd);
+        return 0;
+    }
+
+    printf("Read source for shader type %d: %s\n", shaderType, shader_source);
+
+    GLuint result = LoadShader(shaderType, shader_source);
+
+    if (munmap(shader_source, statbuf.st_size) == -1) {
+        fprintf(stderr, "error unmapping file %s. %d: %s\n", filename, errno, strerror(errno));
+    }
+
+    close(fd);
+
+    return result;
+}
+
 ///
 // Initialize the shader and program object
 //
 static int Init (raspi_opengl_state_t *state) 
 {
-    char const vShaderStr[] =  
-        "attribute vec4 vPosition;    \n"
-        "void main()                  \n"
-        "{                            \n"
-        "   gl_Position = vPosition;  \n"
-        "}                            \n";
-
-    char const fShaderStr[] =  
-        "precision mediump float;\n"\
-        "void main()                                  \n"
-        "{                                            \n"
-        "  gl_FragColor = vec4 ( 1.0, 0.0, 0.0, 1.0 );\n"
-        "}                                            \n";
-
     GLuint vertexShader;
     GLuint fragmentShader;
     GLuint programObject;
     GLint linked;
 
-    // Load the vertex/fragment shaders
-    vertexShader = LoadShader ( GL_VERTEX_SHADER, vShaderStr );
-    fragmentShader = LoadShader ( GL_FRAGMENT_SHADER, fShaderStr );
+    vertexShader = LoadShaderFromFile(GL_VERTEX_SHADER, "shaders/vertex.glsl");
+    fragmentShader = LoadShaderFromFile(GL_FRAGMENT_SHADER, "shaders/fragment.glsl");
+
+    assert(vertexShader);
+    assert(fragmentShader);
 
     // Create the program object
     programObject = glCreateProgram ( );
@@ -116,6 +147,7 @@ static int Init (raspi_opengl_state_t *state)
 
     // Bind vPosition to attribute 0   
     glBindAttribLocation ( programObject, 0, "vPosition" );
+    state->vPositionAttribute = 0;
 
     // Link the program
     glLinkProgram ( programObject );
@@ -152,11 +184,13 @@ static int Init (raspi_opengl_state_t *state)
 ///
 // Draw a triangle using the shader pair created in Init()
 //
-void Draw ( raspi_opengl_state_t* state )
+static void Draw( raspi_opengl_state_t* state )
 {
-    GLfloat vVertices[] = {  0.0f,  0.5f, 0.0f, 
+    GLfloat vVertices[] = {
+        -0.5f,  0.5f, 0.0f, 
         -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f };
+        0.5f, -0.5f, 0.0f
+    };
 
     //printf("Drawing %dx%d\n", state->screen_width, state->screen_height);
     // Set the viewport
@@ -169,10 +203,41 @@ void Draw ( raspi_opengl_state_t* state )
     glUseProgram ( state->programObject );
 
     // Load the vertex data
-    glVertexAttribPointer ( 0, 3, GL_FLOAT, GL_FALSE, 0, vVertices );
-    glEnableVertexAttribArray ( 0 );
+    glVertexAttribPointer ( state->vPositionAttribute, 3, GL_FLOAT, GL_FALSE, 0, vVertices );
+    glEnableVertexAttribArray ( state->vPositionAttribute );
 
     glDrawArrays ( GL_TRIANGLES, 0, 3 );
+    check_gl();
+
+
+    // Draw the toolbar background
+    GLfloat toolbarVertices[] = {
+        -1.0, 1.0, 0.0,
+        -1.0, 0.8, 0.0,
+        1.0, 0.8, 0.0,
+        1.0, 1.0, 0.0,
+        -1.0, 1.0, 0.0,
+        1.0, 0.8, 0.0
+    };
+
+    glVertexAttribPointer(state->vPositionAttribute, 3, GL_FLOAT, GL_FALSE, 0, toolbarVertices);
+    check_gl();
+    glEnableVertexAttribArray(state->vPositionAttribute);
+    check_gl();
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+    check_gl();
+
+
+    // Draw a yellow 1 pixel box around the entire thing.
+    GLfloat boxLines[] = {
+        -1.0, -1.0, 0,
+        -1.0, 1.0, 0,
+        0.8, 1.0, 0,
+        1.0, -1.0, 0
+    };
+    glVertexAttribPointer(state->vPositionAttribute, 3, GL_FLOAT, GL_FALSE, 0, boxLines);
+    glEnableVertexAttribArray(state->vPositionAttribute);
+    glDrawArrays(GL_LINE_LOOP, 0, 4);
     check_gl();
 
     eglSwapBuffers(state->display, state->surface);
@@ -283,6 +348,11 @@ static void init_ogl(raspi_opengl_state_t *state)
    assert(EGL_FALSE != result);
    check_gl();
 
+#if 0
+   glEnable(GL_CULL_FACE);
+   glCullFace(GL_BACK);
+#endif
+
    // Set background color and clear buffers
    glClearColor(1, 1, 1, 1);
    glClear( GL_COLOR_BUFFER_BIT );
@@ -301,10 +371,15 @@ int main ( int argc, char *argv[] )
 
     if ( !Init ( &state ) )
         return 0;
+    bool rc = texture_load_png("images/toolbar-background.png", &state.toolbarBackgroundTexture, NULL, NULL);
+    if (!rc) {
+        fprintf(stderr, "error loading toolbar-background.png");
+    }
 
     Draw(&state);
-    sleep(2);
-    
+
+    while(1) sleep(10);
+
     return 0;
 }
 
