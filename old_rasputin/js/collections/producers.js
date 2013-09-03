@@ -7,14 +7,14 @@ var app = app || {};
 	// Producers Collection
 	// ---------------
 
-	var Producers = Backbone.Collection.extend({
+	app.Producers = Backbone.Collection.extend({
 		// Reference to this collection's model.
-		model: app.Producers,
+		model: app.Producer,
 
 		localStorage: new Backbone.LocalStorage('producers-backbone')
 
 	});
 
 	// Create our global collection of **Producers**.
-	app.producers = new Producers();
+	app.producers = new app.Producers();
 })();

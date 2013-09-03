@@ -12,7 +12,7 @@ var app = app || {};
 			type: Backbone.HasMany,
 			key: 'beverages',
 			relatedModel: 'app.Beverage',
-			collectionType: 'app.beverages',
+			collectionType: 'app.Beverages',
 			reverseRelation: {
 				key: 'beverage_style',
 				includeInJSON: 'id'
@@ -23,6 +23,14 @@ var app = app || {};
 			name: '',
 			image: '',
 			description: ''
+		},
+				
+		initialize: function() {
+			this.schema = {
+				name:				'Text',
+				image: 			'Image',
+				description:'TextArea',
+			};
 		}
 	});
 })();

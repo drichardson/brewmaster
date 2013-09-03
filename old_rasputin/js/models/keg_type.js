@@ -12,7 +12,7 @@ var app = app || {};
 			type: Backbone.HasMany,
 			key: 'tap_entry',
 			relatedModel: 'app.TapEntry',
-			collectionType: 'app.tapEntries',
+			collectionType: 'app.TapEntries',
 			reverseRelation: {
 				key: 'keg_type',
 				includeInJSON: 'id'
@@ -22,7 +22,16 @@ var app = app || {};
 		defaults: {
 			name: '',
 			image: '',
-			capacity: -1
+			capacity: 0
+		},
+				
+		initialize: function() {
+			this.schema = {
+				name:				'Text',
+				image: 			'Image', 
+				capacity:		'Number'
+			}
 		}
+		
 	});
 })();

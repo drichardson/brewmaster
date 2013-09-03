@@ -7,7 +7,7 @@ var app = app || {};
 	// Keg Type Collection
 	// ---------------
 
-	var KegTypes = Backbone.Collection.extend({
+	app.KegTypes = Backbone.Collection.extend({
 		// Reference to this collection's model.
 		model: app.KegType,
 
@@ -16,5 +16,5 @@ var app = app || {};
 	});
 
 	// Create our global collection of **Keg Types**.
-	app.kegTypes = new KegTypes();
+	app.kegTypes = new app.KegTypes();
 })();

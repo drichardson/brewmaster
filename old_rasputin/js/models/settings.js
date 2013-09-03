@@ -10,6 +10,6 @@ var app = app || {};
 		defaults: {
 			tapCount: 4,
 			target_temp: 58
-		}
+		}		
 	});
 })();
