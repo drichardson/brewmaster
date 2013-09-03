@@ -92,16 +92,12 @@ static GLuint LoadShaderFromFile(GLenum shaderType, const char* filename)
         return 0;
     }
 
-    printf("mmap args size = %lld\n", (long long int)statbuf.st_size);
     char* shader_source = mmap(NULL, statbuf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
-    printf("mmap returned %p\n", shader_source);
     if (shader_source == MAP_FAILED) {
         fprintf(stderr, "mmap failed to map file %s. %d: %s\n", filename, errno, strerror(errno));
         close(fd);
         return 0;
     }
-
-    printf("Read source for shader type %d: %s\n", shaderType, shader_source);
 
     GLuint result = LoadShader(shaderType, shader_source);
 
@@ -201,10 +197,12 @@ static void Draw( raspi_opengl_state_t* state )
 
     // Use the program object
     glUseProgram ( state->programObject );
+    GLint fragColor = glGetUniformLocation(state->programObject, "fragColor"); 
 
     // Load the vertex data
     glVertexAttribPointer ( state->vPositionAttribute, 3, GL_FLOAT, GL_FALSE, 0, vVertices );
     glEnableVertexAttribArray ( state->vPositionAttribute );
+    glUniform4f(fragColor, 1, 1, 0, 1);
 
     glDrawArrays ( GL_TRIANGLES, 0, 3 );
     check_gl();
@@ -224,6 +222,7 @@ static void Draw( raspi_opengl_state_t* state )
     check_gl();
     glEnableVertexAttribArray(state->vPositionAttribute);
     check_gl();
+    glUniform4f(fragColor, 0,1,0,1);
     glDrawArrays(GL_TRIANGLES, 0, 6);
     check_gl();
 
@@ -232,11 +231,12 @@ static void Draw( raspi_opengl_state_t* state )
     GLfloat boxLines[] = {
         -1.0, -1.0, 0,
         -1.0, 1.0, 0,
-        0.8, 1.0, 0,
+        1.0, 1.0, 0,
         1.0, -1.0, 0
     };
     glVertexAttribPointer(state->vPositionAttribute, 3, GL_FLOAT, GL_FALSE, 0, boxLines);
     glEnableVertexAttribArray(state->vPositionAttribute);
+    glUniform4f(fragColor, 1,0,0,1);
     glDrawArrays(GL_LINE_LOOP, 0, 4);
     check_gl();
 
