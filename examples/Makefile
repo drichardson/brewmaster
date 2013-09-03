@@ -1,4 +1,4 @@
-TARGETS=openvc opengl_raspi gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw parse_json url_request
+TARGETS=openvc opengl_raspi gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw parse_json url_request opengl_simple opengl_from_scratch Hello_Triangle egl
 CFLAGS=-g -O0 -Wall -Werror
 
 all: $(TARGETS)
@@ -14,6 +14,7 @@ framebuffer_draw: framebuffer_draw.c
 
 cairo_framebuffer_draw: cairo_framebuffer_draw.c
 	$(CC) -lcairo $< $(CFLAGS) -o $@
+
 
 parse_json: parse_json.c
 	clang -ljansson $< $(CFLAGS) -o $@
@@ -31,6 +32,23 @@ url_request: url_request.c
 BC_LDFLAGS+=-L/opt/vc/lib/ -lGLESv2 -lEGL -lopenmaxil -lbcm_host -lvcos -lvchiq_arm -lpthread -lrt
 BC_INCLUDES+=-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux
 
+opengl_simple: opengl_simple.c
+	$(CC) $(BC_INCLUDES) $< $(CFLAGS) -o $@ $(BC_LDFLAGS)
+
+opengl_from_scratch: opengl_from_scratch.c
+	$(CC) $(BC_INCLUDES) $< $(CFLAGS) -o $@ $(BC_LDFLAGS)
+
+egl: egl.c
+	$(CC) $(BC_INCLUDES) $< $(CFLAGS) -o $@ $(BC_LDFLAGS)
+
+
+Hello_Triangle: Hello_Triangle.c
+	$(CC) $(BC_INCLUDES) $^ $(CFLAGS) -o $@ $(BC_LDFLAGS) -lX11
+
+
+# WIP
+cairo_glbackend: cairo_glbackend.c
+	$(CC) -lcairo $(BC_INCLUDES) $< $(CFLAGS) -o $@ $(BC_LDFLAGS)
 
 opengl_raspi: opengl_raspi.c
 	$(CC) $(BC_INCLUDES) $(CFLAGS) $(BC_CFLAGS) $< -o $@ $(BC_LDFLAGS)
