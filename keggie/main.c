@@ -5,8 +5,6 @@
 #include "GLES2/gl2.h"
 #include "EGL/egl.h"
 
-#include "bcm_host.h"
-
 #include "opengl_initialize.h"
 #include "opengl_utilities.h"
 #include "shader_loader.h"
