@@ -6,5 +6,8 @@ native:
 	cd "$(NATIVE_DIR)" && cmake ../..
 	cd "$(NATIVE_DIR)" && make
 
+run: native
+	./build/native/keggie
+
 clean:
 	$(RM) -r $(BUILD_DIR)
