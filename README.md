@@ -7,6 +7,7 @@ Directories
 - ember_frontend - the JavaScript based web front end. Runs in
 the client browser.
 - webapi - the Go based web api. Runs on the Raspberry pi.
+- keggie - the raspberry pi application the user at the keg interacts with
 - examples - experiments that may be useful to keep around during development.
 
 Configuring Raspberri Pi
