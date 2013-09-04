@@ -215,7 +215,8 @@ int main(int argc, char const **argv)
         exit(1);
     }
 
-    rc = texture_load_png("images/toolbar-background.png", &state.toolbarBackgroundTexture, NULL, NULL);
+    //rc = texture_load_png("images/toolbar-background.png", &state.toolbarBackgroundTexture, NULL, NULL);
+    rc = texture_load_jpeg("images/beer-label-ruination-ipa.jpg", &state.toolbarBackgroundTexture, NULL, NULL);
     if (!rc) {
         fprintf(stderr, "error loading toolbar-background.png");
     }

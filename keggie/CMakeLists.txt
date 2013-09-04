@@ -20,5 +20,5 @@ include_directories(. /opt/vc/include/ /opt/vc/include/interface/vcos/pthreads /
 link_directories(/opt/vc/lib)
 
 add_executable(keggie src/main.c src/texture_loader.c src/shader_loader.c src/opengl_initialize.c)
-target_link_libraries(keggie GLESv2 EGL bcm_host png)
+target_link_libraries(keggie GLESv2 EGL bcm_host png jpeg)
 

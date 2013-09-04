@@ -2,6 +2,7 @@
 #include "opengl_utilities.h"
 #include <GLES2/gl2.h>
 #include <png.h>
+#include <jpeglib.h>
 #include <stdlib.h>
 #include <assert.h>
 
@@ -150,7 +151,39 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
 }
 
 bool texture_load_jpeg(const char* filename, GLuint *textureOut, int *width, int *height) {
-    fprintf(stderr, "jpeg loader not implemented.\n");
+    FILE* fp = fopen(filename, "r");
+    if (fp == NULL) {
+        fprintf(stderr, "coulnd't open JPEG file %s\n", filename);
+        return false;
+    }
+
+    struct jpeg_decompress_struct cinfo;
+    struct jpeg_error_mgr jerr;
+
+    cinfo.err = jpeg_std_error(&jerr);
+    jpeg_create_decompress(&cinfo);
+    jpeg_stdio_src(&cinfo, fp);
+    jpeg_read_header(&cinfo, true);
+
+    jpeg_start_decompress(&cinfo);
+    
+#error stack overflow says this mysteriously needs to use a different 2nd parameters to jpeg_read_scanlines:
+#error see here http://stackoverflow.com/questions/5616216/need-help-in-reading-jpeg-file-using-libjpeg
+    uint8_t* pixels = malloc(cinfo.output_height * cinfo.output_width * cinfo.output_components);
+    printf("Reading a JPEG that is %dx%d. %d componenets\n", cinfo.output_width, cinfo.output_height, cinfo.output_components);
+    int const stride = cinfo.output_width * cinfo.output_components;
+    while(cinfo.output_scanline < cinfo.output_height) {
+        printf("reading into %d * %d = %d\n", cinfo.output_scanline, stride, cinfo.output_scanline * stride);
+        jpeg_read_scanlines(&cinfo, pixels + cinfo.output_scanline * stride, 1);
+    }
+
+    jpeg_finish_decompress(&cinfo);
+
+    jpeg_destroy_decompress(&cinfo);
+
+    if (fp) fclose(fp);
+    if (pixels) free(pixels);
+
     return false;
 } 
 
