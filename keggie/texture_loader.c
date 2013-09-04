@@ -1,10 +1,9 @@
 #include "texture_loader.h"
+#include "opengl_utilities.h"
 #include <GLES2/gl2.h>
 #include <png.h>
 #include <stdlib.h>
 #include <assert.h>
-
-#define check_gl() assert(glGetError() == 0)
 
 bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, int *heightOut) {
     //header for testing if it is a png

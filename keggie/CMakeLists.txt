@@ -19,6 +19,6 @@ set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 include_directories(. /opt/vc/include/ /opt/vc/include/interface/vcos/pthreads /opt/vc/include/interface/vmcs_host/linux)
 link_directories(/opt/vc/lib)
 
-add_executable(keggie main.c texture_loader.c shader_loader.c)
+add_executable(keggie main.c texture_loader.c shader_loader.c opengl_initialize.c)
 target_link_libraries(keggie GLESv2 EGL bcm_host png)
 
