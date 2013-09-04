@@ -13,7 +13,7 @@ set(CMAKE_BUILD_TYPE Debug)
 # It still seems to work, mind you, but I'm going to use gcc for now
 # until I really need clang, for peace of mind.
 # set(CMAKE_C_COMPILER /usr/bin/clang)
-set(CMAKE_C_FLAGS "-Wall -Werror")
+set(CMAKE_C_FLAGS "-Wall")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
 include_directories(. /opt/vc/include/ /opt/vc/include/interface/vcos/pthreads /opt/vc/include/interface/vmcs_host/linux)
