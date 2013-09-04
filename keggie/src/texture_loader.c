@@ -113,14 +113,13 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
 
     //Now generate the OpenGL texture object
     GLuint texture;
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(1, &texture);
-    check_gl();
     glBindTexture(GL_TEXTURE_2D, texture);
-    check_gl();
     glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA, width, height, 0,
             GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*) image_data);
-    check_gl();
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     check_gl();
 
     //clean up memory and close stuff

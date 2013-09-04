@@ -16,10 +16,9 @@ typedef struct
 
     GLuint programObject;
     GLuint toolbarBackgroundTexture;
-    GLuint vPositionAttribute;
+    GLuint a_position;
+    GLuint a_textureCoordinates;
 } app_opengl_state_t;
-
-
 
 ///
 // Initialize the shader and program object
@@ -65,8 +64,11 @@ static int init_app_gl(app_opengl_state_t *state)
     glDeleteShader(fragmentShader);
 
     // Bind vPosition to attribute 0   
-    glBindAttribLocation(programObject, 0, "a_position");
-    state->vPositionAttribute = 0;
+    state->a_position = 0;
+    glBindAttribLocation(programObject, state->a_position, "a_position");
+
+    state->a_textureCoordinates = 1;
+    glBindAttribLocation(programObject, state->a_textureCoordinates, "a_textureCoordinates");
 
     // Link the program
     glLinkProgram(programObject);
@@ -111,26 +113,43 @@ static void DrawTriangle(app_opengl_state_t* state)
         0.5f, -0.5f, 0.0f
     };
 
-    //printf("Drawing %dx%d\n", state->screen_width, state->screen_height);
-    // Set the viewport
-    glViewport(0, 0, state->context.screen_width, state->context.screen_height);
-
-    // Clear the color buffer
-    glClear(GL_COLOR_BUFFER_BIT);
-
     // Use the program object
     glUseProgram(state->programObject);
     GLint fragColor = glGetUniformLocation(state->programObject, "u_fragColor"); 
 
     // Load the vertex data
-    glVertexAttribPointer(state->vPositionAttribute, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
-    glEnableVertexAttribArray(state->vPositionAttribute);
+    glVertexAttribPointer(state->a_position, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
+    glEnableVertexAttribArray(state->a_position);
     glUniform4f(fragColor, 1, 1, 0, 1);
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
     check_gl();
+}
+
+static void DrawRedBoxAroundScreen(app_opengl_state_t* state)
+{
+    // Draw a yellow 1 pixel box around the entire thing.
+    GLfloat boxLines[] = {
+        -1.0, -1.0, 0,
+        -1.0, 1.0, 0,
+        1.0, 1.0, 0,
+        1.0, -1.0, 0
+    };
+
+    // Use the program object
+    glUseProgram(state->programObject);
+    GLint fragColor = glGetUniformLocation(state->programObject, "u_fragColor"); 
+
+    glVertexAttribPointer(state->a_position, 3, GL_FLOAT, GL_FALSE, 0, boxLines);
+    glEnableVertexAttribArray(state->a_position);
+    glUniform4f(fragColor, 1,0,0,1);
+    glDrawArrays(GL_LINE_LOOP, 0, 4);
+    check_gl();
+}
 
 
+static void DrawToolbarBackground(app_opengl_state_t* state)
+{
     // Draw the toolbar background
     GLfloat toolbarVertices[] = {
         -1.0, 1.0, 0.0,
@@ -141,34 +160,46 @@ static void DrawTriangle(app_opengl_state_t* state)
         1.0, 0.8, 0.0
     };
 
-    glVertexAttribPointer(state->vPositionAttribute, 3, GL_FLOAT, GL_FALSE, 0, toolbarVertices);
+    // TODO: try with indices too
+    GLfloat toolbarTextureCoordinates[] = {
+        0, 1,
+        0, 0,
+        1, 0,
+        1, 1,
+        0, 1,
+        1, 0
+    };
+
+    glUseProgram(state->programObject);
+    //GLint fragColor = glGetUniformLocation(state->programObject, "u_fragColor"); 
+    GLint enableTexture = glGetUniformLocation(state->programObject, "u_enableTexture"); 
+    GLint texture = glGetUniformLocation(state->programObject, "u_texture");
+    assert(enableTexture != -1);
+    assert(texture != -1);
+
+    glVertexAttribPointer(state->a_position, 3, GL_FLOAT, GL_FALSE, 0, toolbarVertices);
     check_gl();
-    glEnableVertexAttribArray(state->vPositionAttribute);
+    glEnableVertexAttribArray(state->a_position);
     check_gl();
-    glUniform4f(fragColor, 0,1,0,1);
+    glVertexAttribPointer(state->a_textureCoordinates, 2, GL_FLOAT, GL_FALSE, 0, toolbarTextureCoordinates);
+    check_gl();
+    glEnableVertexAttribArray(state->a_textureCoordinates);
+    //glUniform4f(fragColor, 0,1,0,1);
+    glUniform1i(enableTexture, GL_TRUE);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, state->toolbarBackgroundTexture);
+    check_gl();
+
     glDrawArrays(GL_TRIANGLES, 0, 6);
     check_gl();
-
-
-    // Draw a yellow 1 pixel box around the entire thing.
-    GLfloat boxLines[] = {
-        -1.0, -1.0, 0,
-        -1.0, 1.0, 0,
-        1.0, 1.0, 0,
-        1.0, -1.0, 0
-    };
-    glVertexAttribPointer(state->vPositionAttribute, 3, GL_FLOAT, GL_FALSE, 0, boxLines);
-    glEnableVertexAttribArray(state->vPositionAttribute);
-    glUniform4f(fragColor, 1,0,0,1);
-    glDrawArrays(GL_LINE_LOOP, 0, 4);
+    glUniform1i(enableTexture, GL_FALSE);
     check_gl();
-
-    eglSwapBuffers(state->context.display, state->context.surface);
+    glDisableVertexAttribArray(state->a_textureCoordinates);
+    check_gl();
 }
 
-
-
-int main ( int argc, char *argv[] )
+int main(int argc, char const **argv)
 {
     app_opengl_state_t state;
     memset(&state, 0, sizeof(state));
@@ -189,7 +220,17 @@ int main ( int argc, char *argv[] )
         fprintf(stderr, "error loading toolbar-background.png");
     }
 
+    //printf("Drawing %dx%d\n", state->screen_width, state->screen_height);
+    // Set the viewport
+    glViewport(0, 0, state.context.screen_width, state.context.screen_height);
+
+    // Clear the color buffer
+    glClear(GL_COLOR_BUFFER_BIT);
+
     DrawTriangle(&state);
+    DrawRedBoxAroundScreen(&state);
+    DrawToolbarBackground(&state);
+    eglSwapBuffers(state.context.display, state.context.surface);
 
     while(1) sleep(10);
 
