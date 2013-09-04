@@ -20,6 +20,9 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
     //read the header
     fread(header, 1, 8, fp);
 
+    png_structp png_ptr = NULL;
+    png_infop info_ptr = NULL, end_info = NULL;
+
     //test if png
     int is_png = !png_sig_cmp(header, 0, 8);
     if (!is_png) {
@@ -28,15 +31,24 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
     }
 
     //create png struct
-    png_structp png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL,
-            NULL, NULL);
+    png_ptr = png_create_read_struct(PNG_LIBPNG_VER_STRING, NULL, NULL, NULL);
     if (!png_ptr) {
         fclose(fp);
         return false;
     }
 
+    // libpng uses setjmp/longjmp for error/exception handling.
+    if (setjmp(png_jmpbuf(png_ptr))) {
+        fprintf(stderr, "Got libpng error loading %s.\n", filename);
+        if (png_ptr) {
+            png_destroy_read_struct(&png_ptr, info_ptr ? &info_ptr : NULL, end_info ? &end_info : NULL);
+        }
+        if (fp) fclose(fp);
+        return false;
+    }
+
     //create png info struct
-    png_infop info_ptr = png_create_info_struct(png_ptr);
+    info_ptr = png_create_info_struct(png_ptr);
     if (!info_ptr) {
         png_destroy_read_struct(&png_ptr, (png_infopp) NULL, (png_infopp) NULL);
         fclose(fp);
@@ -44,16 +56,9 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
     }
 
     //create png info struct
-    png_infop end_info = png_create_info_struct(png_ptr);
+    end_info = png_create_info_struct(png_ptr);
     if (!end_info) {
         png_destroy_read_struct(&png_ptr, &info_ptr, (png_infopp) NULL);
-        fclose(fp);
-        return false;
-    }
-
-    //png error stuff, not sure libpng man suggests this.
-    if (setjmp(png_jmpbuf(png_ptr))) {
-        png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
         fclose(fp);
         return false;
     }
@@ -72,8 +77,7 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
     png_uint_32 twidth, theight;
 
     // get info about png
-    png_get_IHDR(png_ptr, info_ptr, &twidth, &theight, &bit_depth, &color_type,
-            NULL, NULL, NULL);
+    png_get_IHDR(png_ptr, info_ptr, &twidth, &theight, &bit_depth, &color_type, NULL, NULL, NULL);
 
     //update width and height based on png info
     width = twidth;
@@ -111,13 +115,23 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
     //read the png into image_data through row_pointers
     png_read_image(png_ptr, row_pointers);
 
+    png_byte channels = png_get_channels(png_ptr, info_ptr);
+    printf("PNG has %d channels\n", channels);
+    GLenum format;
+    if (channels == 4) {
+        format = GL_RGBA;
+    } else if (channels == 3) {
+        format = GL_RGB;
+    } else {
+        fprintf(stderr, "PNG has unsupported number of channels for texture. %d\n", channels);
+    }
+
     //Now generate the OpenGL texture object
     GLuint texture;
     glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
     glGenTextures(1, &texture);
     glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGBA, width, height, 0,
-            GL_RGBA, GL_UNSIGNED_BYTE, (GLvoid*) image_data);
+    glTexImage2D(GL_TEXTURE_2D,0, format, width, height, 0, format, GL_UNSIGNED_BYTE, (GLvoid*) image_data);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     check_gl();
