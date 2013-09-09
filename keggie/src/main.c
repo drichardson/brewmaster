@@ -9,6 +9,7 @@
 #include "opengl_utilities.h"
 #include "shader_loader.h"
 #include "texture_loader.h"
+#include "text_rendering.h"
 
 typedef struct
 {
@@ -216,7 +217,9 @@ int main(int argc, char const **argv)
     }
 
     //rc = texture_load_png("images/toolbar-background.png", &state.toolbarBackgroundTexture, NULL, NULL);
-    rc = texture_load_jpeg("images/beer-label-ruination-ipa.jpg", &state.toolbarBackgroundTexture, NULL, NULL);
+    //rc = texture_load_jpeg("images/beer-label-ruination-ipa.jpg", &state.toolbarBackgroundTexture, NULL, NULL);
+    //rc = texture_load_jpeg("images/Um3lUYc.jpg", &state.toolbarBackgroundTexture, NULL, NULL);
+    rc = texture_render_text(&state.toolbarBackgroundTexture, "Testing 1 2 3 4 5", "Georgia", 12.0, NULL, NULL);
     if (!rc) {
         fprintf(stderr, "error loading texture\n");
     }
