@@ -132,7 +132,6 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
     png_read_image(png_ptr, row_pointers);
 
     png_byte channels = png_get_channels(png_ptr, info_ptr);
-    printf("PNG has %d channels\n", channels);
     GLenum format;
     if (channels == 4) {
         format = GL_RGBA;
