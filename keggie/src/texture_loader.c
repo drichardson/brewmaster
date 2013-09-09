@@ -169,9 +169,12 @@ bool texture_load_jpeg(const char* filename, GLuint *textureOut, int *width, int
     uint8_t* pixels = malloc(cinfo.output_height * cinfo.output_width * cinfo.output_components);
     int const stride = cinfo.output_width * cinfo.output_components;
     while(cinfo.output_scanline < cinfo.output_height) {
-        unsigned char *rowp[0];
+        unsigned char *rowp[4];
         rowp[0] = (unsigned char*) pixels + ((cinfo.output_height - (cinfo.output_scanline+1)) * stride);
-        jpeg_read_scanlines(&cinfo, rowp, 1);
+        rowp[1] = (unsigned char*) pixels + ((cinfo.output_height - (cinfo.output_scanline+2)) * stride);
+        rowp[2] = (unsigned char*) pixels + ((cinfo.output_height - (cinfo.output_scanline+3)) * stride);
+        rowp[3] = (unsigned char*) pixels + ((cinfo.output_height - (cinfo.output_scanline+4)) * stride);
+        jpeg_read_scanlines(&cinfo, rowp, 4);
     }
 
     //Now generate the OpenGL texture object
