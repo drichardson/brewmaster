@@ -6,6 +6,21 @@
 #include <stdlib.h>
 #include <assert.h>
 
+bool texture_load_image(unsigned char const* pixels, GLenum format, GLuint* texture_out, int width, int height) {
+    GLuint texture;
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D,0, format, width, height, 0, format, GL_UNSIGNED_BYTE, pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    check_gl();
+
+    *texture_out = texture;
+
+    return true;
+}
+
 bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, int *heightOut) {
     //header for testing if it is a png
     png_byte header[8];
@@ -128,14 +143,7 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
     }
 
     //Now generate the OpenGL texture object
-    GLuint texture;
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D,0, format, width, height, 0, format, GL_UNSIGNED_BYTE, (GLvoid*) image_data);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    check_gl();
+    bool result = texture_load_image(image_data, format, textureOut, width, height);
 
     //clean up memory and close stuff
     png_destroy_read_struct(&png_ptr, &info_ptr, &end_info);
@@ -145,9 +153,8 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
 
     if (widthOut) *widthOut = width;
     if (heightOut) *heightOut = height;
-    if (textureOut) *textureOut = texture;
 
-    return true;
+    return result;
 }
 
 bool texture_load_jpeg(const char* filename, GLuint *textureOut, int *width, int *height) {
@@ -178,22 +185,14 @@ bool texture_load_jpeg(const char* filename, GLuint *textureOut, int *width, int
     }
 
     //Now generate the OpenGL texture object
-    GLuint texture;
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
-    glTexImage2D(GL_TEXTURE_2D,0, GL_RGB, cinfo.output_width, cinfo.output_height, 0, GL_RGB, GL_UNSIGNED_BYTE, (GLvoid*)pixels);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    check_gl();
+    bool result = texture_load_image(pixels, GL_RGB, textureOut, cinfo.output_width, cinfo.output_height);
 
     jpeg_finish_decompress(&cinfo);
     jpeg_destroy_decompress(&cinfo);
 
     if (fp) fclose(fp);
     if (pixels) free(pixels);
-    if (textureOut) *textureOut = texture;
 
-    return true;
+    return result;
 } 
 
