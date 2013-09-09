@@ -218,7 +218,7 @@ int main(int argc, char const **argv)
     //rc = texture_load_png("images/toolbar-background.png", &state.toolbarBackgroundTexture, NULL, NULL);
     rc = texture_load_jpeg("images/beer-label-ruination-ipa.jpg", &state.toolbarBackgroundTexture, NULL, NULL);
     if (!rc) {
-        fprintf(stderr, "error loading toolbar-background.png");
+        fprintf(stderr, "error loading texture\n");
     }
 
     //printf("Drawing %dx%d\n", state->screen_width, state->screen_height);

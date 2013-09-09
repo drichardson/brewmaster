@@ -151,7 +151,7 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
 }
 
 bool texture_load_jpeg(const char* filename, GLuint *textureOut, int *width, int *height) {
-    FILE* fp = fopen(filename, "r");
+    FILE* fp = fopen(filename, "rb");
     if (fp == NULL) {
         fprintf(stderr, "coulnd't open JPEG file %s\n", filename);
         return false;
@@ -166,24 +166,31 @@ bool texture_load_jpeg(const char* filename, GLuint *textureOut, int *width, int
     jpeg_read_header(&cinfo, true);
 
     jpeg_start_decompress(&cinfo);
-    
-#error stack overflow says this mysteriously needs to use a different 2nd parameters to jpeg_read_scanlines:
-#error see here http://stackoverflow.com/questions/5616216/need-help-in-reading-jpeg-file-using-libjpeg
     uint8_t* pixels = malloc(cinfo.output_height * cinfo.output_width * cinfo.output_components);
-    printf("Reading a JPEG that is %dx%d. %d componenets\n", cinfo.output_width, cinfo.output_height, cinfo.output_components);
     int const stride = cinfo.output_width * cinfo.output_components;
     while(cinfo.output_scanline < cinfo.output_height) {
-        printf("reading into %d * %d = %d\n", cinfo.output_scanline, stride, cinfo.output_scanline * stride);
-        jpeg_read_scanlines(&cinfo, pixels + cinfo.output_scanline * stride, 1);
+        unsigned char *rowp[0];
+        rowp[0] = (unsigned char*) pixels + cinfo.output_scanline * stride;
+        jpeg_read_scanlines(&cinfo, rowp, 1);
     }
 
-    jpeg_finish_decompress(&cinfo);
+    //Now generate the OpenGL texture object
+    GLuint texture;
+    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+    glGenTextures(1, &texture);
+    glBindTexture(GL_TEXTURE_2D, texture);
+    glTexImage2D(GL_TEXTURE_2D,0, GL_RGB, cinfo.output_width, cinfo.output_height, 0, GL_RGB, GL_UNSIGNED_BYTE, (GLvoid*)pixels);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    check_gl();
 
+    jpeg_finish_decompress(&cinfo);
     jpeg_destroy_decompress(&cinfo);
 
     if (fp) fclose(fp);
     if (pixels) free(pixels);
+    if (textureOut) *textureOut = texture;
 
-    return false;
+    return true;
 } 
 
