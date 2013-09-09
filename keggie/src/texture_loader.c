@@ -170,7 +170,7 @@ bool texture_load_jpeg(const char* filename, GLuint *textureOut, int *width, int
     int const stride = cinfo.output_width * cinfo.output_components;
     while(cinfo.output_scanline < cinfo.output_height) {
         unsigned char *rowp[0];
-        rowp[0] = (unsigned char*) pixels + cinfo.output_scanline * stride;
+        rowp[0] = (unsigned char*) pixels + ((cinfo.output_height - (cinfo.output_scanline+1)) * stride);
         jpeg_read_scanlines(&cinfo, rowp, 1);
     }
 
