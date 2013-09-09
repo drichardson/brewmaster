@@ -9,5 +9,8 @@ native:
 run: native
 	./build/native/keggie
 
+cscope:
+	cscope -Rb src/*
+
 clean:
-	$(RM) -r $(BUILD_DIR)
+	$(RM) -r $(BUILD_DIR) cscope.out
