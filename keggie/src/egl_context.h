@@ -5,17 +5,17 @@
 #include <stdint.h>
 #include <stdbool.h>
 
-typedef struct opengl_context
+typedef struct egl_context
 {
    uint32_t screen_width;
    uint32_t screen_height;
    EGLDisplay display;
    EGLSurface surface;
    EGLContext context;
-} opengl_context_t;
+} egl_context_t;
  
 
 // Setup the display for rendering using OpenGL.
 // Returns true on success; false otherwise.
-bool opengl_initialize(opengl_context_t* context_out);
+bool egl_initialize(egl_context_t* context_out);
 

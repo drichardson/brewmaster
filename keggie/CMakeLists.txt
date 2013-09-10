@@ -21,6 +21,10 @@ set(RASPI_INCLUDES /opt/vc/include/ /opt/vc/include/interface/vcos/pthreads /opt
 include_directories(/usr/include/freetype2 ${RASPI_INCLUDES})
 link_directories(/opt/vc/lib)
 
-add_executable(keggie src/main.c src/texture_loader.c src/shader_loader.c src/opengl_initialize.c src/text_rendering.c src/threads.c src/log.c)
+add_custom_command(TARGET keggie PRE_BUILD
+                   COMMAND ${CMAKE_COMMAND} -E copy_directory
+                       ${CMAKE_SOURCE_DIR}/shaders $<TARGET_FILE_DIR:keggie>)
+
+add_executable(keggie src/main.c src/texture_loader.c src/shader_loader.c src/egl_context.c src/gl_context.c src/text_rendering.c src/threads.c src/log.c src/bundle.c src/image.c)
 target_link_libraries(keggie GLESv2 EGL bcm_host png jpeg freetype)
 

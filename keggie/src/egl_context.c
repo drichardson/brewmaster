@@ -1,9 +1,9 @@
-#include "opengl_initialize.h"
+#include "egl_context.h"
 #include "opengl_utilities.h"
 #include "bcm_host.h"
 #include <assert.h>
 
-bool opengl_initialize(opengl_context_t* state)
+bool egl_initialize(egl_context_t* context)
 {
     bcm_host_init();
 
@@ -37,17 +37,17 @@ bool opengl_initialize(opengl_context_t* state)
     EGLConfig config;
 
     // get an EGL display connection
-    state->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
-    assert(state->display!=EGL_NO_DISPLAY);
+    context->display = eglGetDisplay(EGL_DEFAULT_DISPLAY);
+    assert(context->display!=EGL_NO_DISPLAY);
     check_gl();
 
     // initialize the EGL display connection
-    result = eglInitialize(state->display, NULL, NULL);
+    result = eglInitialize(context->display, NULL, NULL);
     assert(EGL_FALSE != result);
     check_gl();
 
     // get an appropriate EGL frame buffer configuration
-    result = eglChooseConfig(state->display, attribute_list, &config, 1, &num_config);
+    result = eglChooseConfig(context->display, attribute_list, &config, 1, &num_config);
     assert(EGL_FALSE != result);
     check_gl();
 
@@ -57,23 +57,23 @@ bool opengl_initialize(opengl_context_t* state)
     check_gl();
 
     // create an EGL rendering context
-    state->context = eglCreateContext(state->display, config, EGL_NO_CONTEXT, context_attributes);
-    assert(state->context!=EGL_NO_CONTEXT);
+    context->context = eglCreateContext(context->display, config, EGL_NO_CONTEXT, context_attributes);
+    assert(context->context!=EGL_NO_CONTEXT);
     check_gl();
 
     // create an EGL window surface
-    success = graphics_get_display_size(0 /* LCD */, &state->screen_width, &state->screen_height);
+    success = graphics_get_display_size(0 /* LCD */, &context->screen_width, &context->screen_height);
     assert(success >= 0);
 
     dst_rect.x = 0;
     dst_rect.y = 0;
-    dst_rect.width = state->screen_width;
-    dst_rect.height = state->screen_height;
+    dst_rect.width = context->screen_width;
+    dst_rect.height = context->screen_height;
 
     src_rect.x = 0;
     src_rect.y = 0;
-    src_rect.width = state->screen_width << 16;
-    src_rect.height = state->screen_height << 16;        
+    src_rect.width = context->screen_width << 16;
+    src_rect.height = context->screen_height << 16;        
 
     dispman_display = vc_dispmanx_display_open(0 /* LCD */);
     dispman_update = vc_dispmanx_update_start(0);
@@ -83,18 +83,18 @@ bool opengl_initialize(opengl_context_t* state)
             &src_rect, DISPMANX_PROTECTION_NONE, 0 /*alpha*/, 0/*clamp*/, 0/*transform*/);
 
     nativewindow.element = dispman_element;
-    nativewindow.width = state->screen_width;
-    nativewindow.height = state->screen_height;
+    nativewindow.width = context->screen_width;
+    nativewindow.height = context->screen_height;
     vc_dispmanx_update_submit_sync(dispman_update);
 
     check_gl();
 
-    state->surface = eglCreateWindowSurface(state->display, config, &nativewindow, NULL);
-    assert(state->surface != EGL_NO_SURFACE);
+    context->surface = eglCreateWindowSurface(context->display, config, &nativewindow, NULL);
+    assert(context->surface != EGL_NO_SURFACE);
     check_gl();
 
     // connect the context to the surface
-    result = eglMakeCurrent(state->display, state->surface, state->surface, state->context);
+    result = eglMakeCurrent(context->display, context->surface, context->surface, context->context);
     assert(EGL_FALSE != result);
     check_gl();
 
