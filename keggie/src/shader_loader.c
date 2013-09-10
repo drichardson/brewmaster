@@ -1,4 +1,5 @@
 #include "shader_loader.h"
+#include "log.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -67,20 +68,20 @@ bool shader_load_from_file(GLenum shaderType, const char* filename, GLuint* shad
 {
     int fd = open(filename, O_RDONLY);
     if (fd == -1) {
-        fprintf(stderr, "Couldn't open shader at %s. %d: %s\n", filename, errno, strerror(errno));
+        log_error("Couldn't open shader at %s. %d: %s", filename, errno, strerror(errno));
         return false;
     }
 
     struct stat statbuf;
     if (fstat(fd, &statbuf) == -1) {
-        fprintf(stderr, "Couldn't get stat info for %s\n", filename);
+        log_error("Couldn't get stat info for %s", filename);
         close(fd);
         return false;
     }
 
     char* shader_source = mmap(NULL, statbuf.st_size, PROT_READ, MAP_PRIVATE, fd, 0);
     if (shader_source == MAP_FAILED) {
-        fprintf(stderr, "mmap failed to map file %s. %d: %s\n", filename, errno, strerror(errno));
+        log_error("mmap failed to map file %s. %d: %s", filename, errno, strerror(errno));
         close(fd);
         return false;
     }
@@ -88,7 +89,7 @@ bool shader_load_from_file(GLenum shaderType, const char* filename, GLuint* shad
     bool result = shader_load_from_string(shaderType, shader_source, shader_out);
 
     if (munmap(shader_source, statbuf.st_size) == -1) {
-        fprintf(stderr, "error unmapping file %s. %d: %s\n", filename, errno, strerror(errno));
+        log_error("error unmapping file %s. %d: %s", filename, errno, strerror(errno));
     }
 
     close(fd);

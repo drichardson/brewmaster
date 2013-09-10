@@ -16,9 +16,11 @@ set(CMAKE_BUILD_TYPE Debug)
 set(CMAKE_C_FLAGS "-Wall")
 set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
-include_directories(. /opt/vc/include/ /opt/vc/include/interface/vcos/pthreads /opt/vc/include/interface/vmcs_host/linux)
+set(RASPI_INCLUDES /opt/vc/include/ /opt/vc/include/interface/vcos/pthreads /opt/vc/include/interface/vmcs_host/linux)
+
+include_directories(/usr/include/freetype2 ${RASPI_INCLUDES})
 link_directories(/opt/vc/lib)
 
-add_executable(keggie src/main.c src/texture_loader.c src/shader_loader.c src/opengl_initialize.c src/text_rendering.c)
-target_link_libraries(keggie GLESv2 EGL bcm_host png jpeg cairo)
+add_executable(keggie src/main.c src/texture_loader.c src/shader_loader.c src/opengl_initialize.c src/text_rendering.c src/threads.c src/log.c)
+target_link_libraries(keggie GLESv2 EGL bcm_host png jpeg freetype)
 

@@ -10,6 +10,8 @@
 #include "shader_loader.h"
 #include "texture_loader.h"
 #include "text_rendering.h"
+#include "threads.h"
+#include "log.h"
 
 typedef struct
 {
@@ -202,17 +204,19 @@ static void DrawToolbarBackground(app_opengl_state_t* state)
 
 int main(int argc, char const **argv)
 {
+    thread_register_main();
+
     app_opengl_state_t state;
     memset(&state, 0, sizeof(state));
 
     bool rc = opengl_initialize(&state.context);
     if (!rc) {
-        fprintf(stderr, "Couldn't initialize open gl to get full screen.\n");
+        log_error("Couldn't initialize open gl to get full screen.");
         exit(1);
     }
 
     if (!init_app_gl(&state)) {
-        fprintf(stderr, "Application specific gl initialization failed.\n");
+        log_error("Application specific gl initialization failed.");
         exit(1);
     }
 
@@ -221,7 +225,7 @@ int main(int argc, char const **argv)
     //rc = texture_load_jpeg("images/Um3lUYc.jpg", &state.toolbarBackgroundTexture, NULL, NULL);
     rc = texture_render_text(&state.toolbarBackgroundTexture, "Testing 1 2 3 4 5", "Georgia", 12.0, NULL, NULL);
     if (!rc) {
-        fprintf(stderr, "error loading texture\n");
+        log_error("error loading texture");
     }
 
     //printf("Drawing %dx%d\n", state->screen_width, state->screen_height);

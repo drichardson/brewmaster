@@ -1,5 +1,6 @@
 #include "texture_loader.h"
 #include "opengl_utilities.h"
+#include "log.h"
 #include <GLES2/gl2.h>
 #include <png.h>
 #include <jpeglib.h>
@@ -55,7 +56,7 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
 
     // libpng uses setjmp/longjmp for error/exception handling.
     if (setjmp(png_jmpbuf(png_ptr))) {
-        fprintf(stderr, "Got libpng error loading %s.\n", filename);
+        log_error("Got libpng error loading %s.", filename);
         if (png_ptr) {
             png_destroy_read_struct(&png_ptr, info_ptr ? &info_ptr : NULL, end_info ? &end_info : NULL);
         }
@@ -138,7 +139,7 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
     } else if (channels == 3) {
         format = GL_RGB;
     } else {
-        fprintf(stderr, "PNG has unsupported number of channels for texture. %d\n", channels);
+        log_error("PNG has unsupported number of channels for texture. %d", channels);
     }
 
     //Now generate the OpenGL texture object
@@ -159,7 +160,7 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
 bool texture_load_jpeg(const char* filename, GLuint *textureOut, int *width, int *height) {
     FILE* fp = fopen(filename, "rb");
     if (fp == NULL) {
-        fprintf(stderr, "coulnd't open JPEG file %s\n", filename);
+        log_error("coulnd't open JPEG file %s", filename);
         return false;
     }
 
