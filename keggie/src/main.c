@@ -71,16 +71,9 @@ static void DrawToolbarBackground(gl_context_t* context)
     rect.origin.y = 0.8;
     rect.size.width = 2;
     rect.size.height = 0.2;
-    image_t* img = image_from_jpg_file("images/beer-label-ruination-ipa.jpg");
+    image_t* img = bundle_image_named("toolbar-background.png");
     image_draw(img, context, rect);
-
-#if 0
-    rc = texture_load_png("images/toolbar-background.png", &context.toolbarBackgroundTexture, NULL, NULL);
-    rc = texture_load_jpeg("images/beer-label-ruination-ipa.jpg", &context.toolbarBackgroundTexture, NULL, NULL);
-    if (!rc) {
-        log_error("error loading texture");
-    }
-#endif
+    image_free(img);
 }
 
 int main(int argc, char const **argv)
@@ -114,7 +107,7 @@ int main(int argc, char const **argv)
     char font_path[PATH_MAX];
     bundle_resource_path(font_path, sizeof(font_path), "fonts/GillSans.ttc");
     log_debug("Loading font from %s\n", font_path);
-    text_render("This is a test.", font_path, 20.0, 0.0, 0.0);
+    //text_render("This is a test.", font_path, 20.0, 0.0, 0.0);
 
     eglSwapBuffers(context.egl_context.display, context.egl_context.surface);
 

@@ -7,7 +7,7 @@ native:
 	cd "$(NATIVE_DIR)" && make
 
 run: native
-	./build/native/keggie
+	./build/native/keggie.app/keggie
 
 cscope:
 	cscope -Rb src/*

@@ -12,7 +12,7 @@ typedef struct {
     GLuint texture;
 } image_t;
 
-image_t* image_from_jpg_file(char const* filename);
+image_t* image_with_path(char const* path);
 void image_free(image_t*);
 size2d_t image_size(image_t*);
 GLuint image_gl_texture(image_t*);

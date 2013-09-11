@@ -26,3 +26,11 @@ void bundle_resource_path(char* path, size_t max_path, char const* resource) {
     snprintf(path, max_path, "%s%s", buf, resource);
 }
 
+image_t* bundle_image_named(char const* name) {
+    char path[PATH_MAX];
+    char resource_subpath[PATH_MAX];
+    bundle_resource_path(resource_subpath, sizeof(resource_subpath), "images");
+    snprintf(path, sizeof(path), "%s/%s", resource_subpath, name);
+    return image_with_path(path);
+}
+

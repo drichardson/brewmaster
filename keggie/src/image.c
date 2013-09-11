@@ -1,15 +1,16 @@
 #include "image.h"
 #include "texture_loader.h"
 #include "opengl_utilities.h"
+#include "paths.h"
 #include <assert.h>
 
-image_t* image_from_jpg_file(char const* filename) {
+image_t* image_constructor(char const* filename, bool (*texture_loader)(const char*,GLuint*,int*,int*)) {
     // TODO:DOUG Probably better to load the image and convert to texture as needed.
     // There are only a certain number of texture units and we don't want to use them
     // all up. May need a texture unit manager that has a LRU cache for images.
     int w, h;
     GLuint texture;
-    if (!texture_load_jpeg(filename, &texture, &w, &h)) return NULL;
+    if (!texture_loader(filename, &texture, &w, &h)) return NULL;
 
     image_t* result = (image_t*)calloc(sizeof(image_t), 1);
     result->texture = texture;
@@ -18,7 +19,20 @@ image_t* image_from_jpg_file(char const* filename) {
     return result;
 }
 
+image_t* image_with_path(char const* path) {
+   char const* extension = path_extension(path); 
+   if (extension) {
+       if(strcasecmp(extension, "png") == 0) {
+           return image_constructor(path, texture_load_png);
+       } else if(strcasecmp(extension, "jpg") == 0 || strcasecmp(extension, "jpeg") == 0) {
+           return image_constructor(path, texture_load_jpeg);
+       }
+   }
+   return NULL;
+}
+
 void image_free(image_t* img) {
+    glDeleteTextures(1, &img->texture);
     free(img);
 }
 
