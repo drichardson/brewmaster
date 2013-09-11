@@ -1,5 +1,6 @@
 BUILD_DIR=build
 NATIVE_DIR=$(BUILD_DIR)/native
+KEGGIE_APP=./build/native/keggie.app/keggie
 
 native: 
 	[ -d "$(NATIVE_DIR)" ] || mkdir -p "$(NATIVE_DIR)"
@@ -7,7 +8,10 @@ native:
 	cd "$(NATIVE_DIR)" && make
 
 run: native
-	./build/native/keggie.app/keggie
+	$(KEGGIE_APP)
+
+rundebug: native
+	gdb $(KEGGIE_APP)
 
 cscope:
 	cscope -Rb src/*
