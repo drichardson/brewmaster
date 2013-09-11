@@ -10,7 +10,7 @@ native:
 run: native
 	$(KEGGIE_APP)
 
-rundebug: native
+debug: native
 	gdb $(KEGGIE_APP)
 
 cscope:
