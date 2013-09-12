@@ -102,12 +102,13 @@ int main(int argc, char const **argv)
 
     DrawTriangle(&context);
     DrawRedBoxAroundScreen(&context);
-    DrawToolbarBackground(&context);
+    //DrawToolbarBackground(&context);
     
     char font_path[PATH_MAX];
     bundle_resource_path(font_path, sizeof(font_path), "fonts/GillSans.ttc");
-    log_debug("Loading font from %s\n", font_path);
-    //text_render("This is a test.", font_path, 20.0, 0.0, 0.0);
+    log_debug("Loading font from %s", font_path);
+    text_render("This is a test.", font_path, 20.0, 0.0, 0.0);
+    log_debug("rendered text");
 
     eglSwapBuffers(context.egl_context.display, context.egl_context.surface);
 
