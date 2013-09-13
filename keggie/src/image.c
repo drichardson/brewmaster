@@ -3,20 +3,27 @@
 #include "opengl_utilities.h"
 #include "paths.h"
 #include <assert.h>
+#include "log.h"
 
-image_t* image_constructor(char const* filename, bool (*texture_loader)(const char*,GLuint*,int*,int*)) {
+static image_t* image_constructor_base(GLuint texture, GLenum format, GLsizei width, GLsizei height) {
+    image_t* result = (image_t*)calloc(sizeof(image_t), 1);
+    result->texture = texture;
+    result->width = width;
+    result->height = height;
+    result->format = format;
+
+    return result;
+}
+
+static image_t* image_constructor(char const* filename, bool (*texture_loader)(const char*,GLenum*,GLuint*,int*,int*)) {
     // TODO:DOUG Probably better to load the image and convert to texture as needed.
     // There are only a certain number of texture units and we don't want to use them
     // all up. May need a texture unit manager that has a LRU cache for images.
     int w, h;
     GLuint texture;
-    if (!texture_loader(filename, &texture, &w, &h)) return NULL;
-
-    image_t* result = (image_t*)calloc(sizeof(image_t), 1);
-    result->texture = texture;
-    result->width = w;
-    result->height = h;
-    return result;
+    GLenum format;
+    if (!texture_loader(filename, &format, &texture, &w, &h)) return NULL;
+    return image_constructor_base(texture, format, w, h);
 }
 
 image_t* image_with_path(char const* path) {
@@ -29,6 +36,13 @@ image_t* image_with_path(char const* path) {
        }
    }
    return NULL;
+}
+
+image_t* image_with_pixels(unsigned char const* pixels, GLenum format, GLsizei width, GLsizei height) {
+    GLuint texture;
+    if(!texture_load_image(pixels, format, &texture, width, height)) return NULL;
+    log_debug("Using texture %d", texture);
+    return image_constructor_base(texture, format, width, height);
 }
 
 void image_free(image_t* img) {
@@ -49,16 +63,6 @@ GLuint image_gl_texture(image_t* img) {
 
 void image_draw(image_t* img, gl_context_t* ctx, rect2d_t r) {
     // Draw the toolbar background
-#if 0
-    GLfloat toolbarVertices[] = {
-        -1.0, 1.0, 0.0,
-        -1.0, 0.8, 0.0,
-        1.0, 0.8, 0.0,
-        1.0, 1.0, 0.0,
-        -1.0, 1.0, 0.0,
-        1.0, 0.8, 0.0
-    };
-#else
     GLfloat v[3*6];
     v[0] = rect_left(r); v[1] = rect_top(r); v[2] = 0;
     v[3] = rect_left(r); v[4] = rect_bottom(r); v[5] = 0;
@@ -66,7 +70,6 @@ void image_draw(image_t* img, gl_context_t* ctx, rect2d_t r) {
     v[9] = rect_right(r); v[10] = rect_top(r); v[11] = 0;
     v[12] = rect_left(r); v[13] = rect_top(r); v[14] = 0;
     v[15] = rect_right(r); v[16] = rect_bottom(r); v[17] = 0;
-#endif
 
     // TODO: try with indices too
     GLfloat toolbarTextureCoordinates[] = {
@@ -100,12 +103,32 @@ void image_draw(image_t* img, gl_context_t* ctx, rect2d_t r) {
     glBindTexture(GL_TEXTURE_2D, image_gl_texture(img));
     check_gl();
 
+    switch(img->format) {
+        case GL_ALPHA:
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+            break;
+        case GL_RGBA:
+            glEnable(GL_BLEND);
+            glBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
+            break;
+        case GL_RGB:
+            glDisable(GL_BLEND);
+            break;
+        default:
+            log_error("Unsupported image format %d", img->format);
+            assert(false);
+            break;
+    }
+
     glDrawArrays(GL_TRIANGLES, 0, 6);
     check_gl();
     glUniform1i(enableTexture, GL_FALSE);
     check_gl();
     glDisableVertexAttribArray(ctx->a_textureCoordinates);
     check_gl();
+
+    glDisable(GL_BLEND);
 
 }
 

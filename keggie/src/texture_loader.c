@@ -22,7 +22,7 @@ bool texture_load_image(unsigned char const* pixels, GLenum format, GLuint* text
     return true;
 }
 
-bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, int *heightOut) {
+bool texture_load_png(const char* filename, GLenum* formatOut, GLuint* textureOut, int *widthOut, int *heightOut) {
     //header for testing if it is a png
     png_byte header[8];
 
@@ -153,11 +153,12 @@ bool texture_load_png(const char* filename, GLuint* textureOut, int *widthOut, i
 
     if (widthOut) *widthOut = width;
     if (heightOut) *heightOut = height;
+    if (formatOut) *formatOut = format;
 
     return result;
 }
 
-bool texture_load_jpeg(const char* filename, GLuint *textureOut, int *width, int *height) {
+bool texture_load_jpeg(const char* filename, GLenum *formatOut, GLuint *textureOut, int *width, int *height) {
     FILE* fp = fopen(filename, "rb");
     if (fp == NULL) {
         log_error("coulnd't open JPEG file %s", filename);
@@ -185,13 +186,15 @@ bool texture_load_jpeg(const char* filename, GLuint *textureOut, int *width, int
     }
 
     //Now generate the OpenGL texture object
-    bool result = texture_load_image(pixels, GL_RGB, textureOut, cinfo.output_width, cinfo.output_height);
+    GLenum const format = GL_RGB;
+    bool result = texture_load_image(pixels, format, textureOut, cinfo.output_width, cinfo.output_height);
 
     jpeg_finish_decompress(&cinfo);
     jpeg_destroy_decompress(&cinfo);
 
     if (fp) fclose(fp);
     if (pixels) free(pixels);
+    if (formatOut) *formatOut = format;
 
     return result;
 } 

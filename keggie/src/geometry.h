@@ -31,3 +31,12 @@ static inline float rect_right(rect2d_t r) {
     return r.origin.x + r.size.width;
 }
 
+static inline rect2d_t rect_make(float x, float y, float width, float height) {
+    rect2d_t r;
+    r.origin.x = x;
+    r.origin.y = y;
+    r.size.width = width;
+    r.size.height = height;
+    return r;
+}
+

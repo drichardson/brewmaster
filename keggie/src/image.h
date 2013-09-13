@@ -13,6 +13,7 @@ typedef struct {
 } image_t;
 
 image_t* image_with_path(char const* path);
+image_t* image_with_pixels(unsigned char const* pixels, GLenum format, GLsizei width, GLsizei height);
 void image_free(image_t*);
 size2d_t image_size(image_t*);
 GLuint image_gl_texture(image_t*);

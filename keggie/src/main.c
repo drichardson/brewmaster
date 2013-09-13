@@ -71,9 +71,17 @@ static void DrawToolbarBackground(gl_context_t* context)
     rect.origin.y = 0.8;
     rect.size.width = 2;
     rect.size.height = 0.2;
-    image_t* img = bundle_image_named("toolbar-background.png");
+    image_t* img = bundle_image_named("beer-label-ruination-ipa.jpg");
     image_draw(img, context, rect);
     image_free(img);
+
+    rect.size.height = 0.8;
+    rect.origin.y = 0;
+    img = bundle_image_named("toolbar-background.png");
+    //img = bundle_image_named("Untitled-1.png");
+    image_draw(img, context, rect);
+    image_free(img);
+
 }
 
 int main(int argc, char const **argv)
@@ -102,12 +110,13 @@ int main(int argc, char const **argv)
 
     DrawTriangle(&context);
     DrawRedBoxAroundScreen(&context);
-    //DrawToolbarBackground(&context);
+    DrawToolbarBackground(&context);
     
     char font_path[PATH_MAX];
     bundle_resource_path(font_path, sizeof(font_path), "fonts/GillSans.ttc");
     log_debug("Loading font from %s", font_path);
-    text_render("This is a test.", font_path, 20.0, 0.0, 0.0);
+    //text_render(&context, "This is a test.", font_path, 20.0, 0.0, 0.0);
+    text_render(&context, "Z", font_path, 20.0, 0.0, 0.0);
     log_debug("rendered text");
 
     eglSwapBuffers(context.egl_context.display, context.egl_context.surface);

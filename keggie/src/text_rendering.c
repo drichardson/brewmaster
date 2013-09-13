@@ -2,6 +2,7 @@
 #include "texture_loader.h"
 #include "log.h"
 #include "opengl_utilities.h"
+#include "image.h"
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
@@ -23,16 +24,11 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
         goto done;
     }
 
-    error = FT_Set_Char_Size(face, font_size, font_size, 72, 72);
+    error = FT_Set_Char_Size(face, 0, font_size*64, 72, 72);
     if (error != 0)  {
         log_error("Error setting font size error = %x", error);
         goto done;
     }
-
-    glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    GLuint texture;
-    glGenTextures(1, &texture);
-    glBindTexture(GL_TEXTURE_2D, texture);
 
     FT_GlyphSlot g = face->glyph;
 
@@ -45,36 +41,19 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
             continue;
         }
 
-        glTexImage2D(GL_TEXTURE_2D,
-                0, // level of detail 0 (not scaled down)
-                GL_ALPHA, // internal format of texture
-                g->bitmap.width, 
-                g->bitmap.rows,
-                0, // border, must be 0 for gl es 2.0
-                GL_ALPHA, // format of texel data
-                GL_UNSIGNED_BYTE, // data type of texel
-                g->bitmap.buffer);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-
-        check_gl();
+        image_t* image = image_with_pixels(g->bitmap.buffer, GL_ALPHA, g->bitmap.width, g->bitmap.rows);
+#if 0
         float x2 = x + g->bitmap_left * sx;
         float y2 = -y - g->bitmap_top * sy;
         float w = g->bitmap.width * sx;
         float h = g->bitmap.rows * sy;
+        rect2d_t r = rect_make(x2, y2, w, h);
+#else
+        rect2d_t r = rect_make(0.5, -0.8, 0.2, 0.2);
+#endif
 
-#error do drawing stuff using image_draw. Probably refactor into common code or use image draw directly
-        GLfloat box[4][4] = {
-            {x2,     -y2    , 0, 0},
-            {x2 + w, -y2    , 1, 0},
-            {x2,     -y2 - h, 0, 1},
-            {x2 + w, -y2 - h, 1, 1},
-        };
-
-        glBufferData(GL_ARRAY_BUFFER, sizeof box, box, GL_DYNAMIC_DRAW);
-        check_gl();
-        glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
-        check_gl();
+        image_draw(image, ctx, r);
+        image_free(image);
 
         x += (g->advance.x >> 6) * sx;
         y += (g->advance.y >> 6) * sy; 
