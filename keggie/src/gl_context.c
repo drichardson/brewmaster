@@ -43,13 +43,6 @@ bool gl_context_initialize(gl_context_t* ctx) {
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
 
-    // Bind vPosition to attribute 0   
-    ctx->a_position = 0;
-    glBindAttribLocation(programObject, ctx->a_position, "a_position");
-
-    ctx->a_textureCoordinates = 1;
-    glBindAttribLocation(programObject, ctx->a_textureCoordinates, "a_textureCoordinates");
-
     // Link the program
     glLinkProgram(programObject);
 
@@ -75,6 +68,13 @@ bool gl_context_initialize(gl_context_t* ctx) {
         glDeleteProgram(programObject);
         return false;
     }
+
+    // Get the attribute bindings.
+    ctx->a_position = glGetAttribLocation(programObject, "a_position");
+    assert(ctx->a_position != -1);
+    ctx->a_textureCoordinates = glGetAttribLocation(programObject, "a_textureCoordinates");
+    assert(ctx->a_textureCoordinates != -1);
+    check_gl();
 
     // Store the program object
     ctx->mainProgram = programObject;
