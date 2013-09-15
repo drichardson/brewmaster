@@ -19,3 +19,6 @@ Configuring Raspberri Pi
 booting to X, use raspi-config to change the boot behavior.
 
 
+TODO
+----
+- Consider using libjpeg-turbo (drop in replacement for libjpeg that performs better by using SIMD)
