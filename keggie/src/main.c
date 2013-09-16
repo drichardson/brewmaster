@@ -22,10 +22,29 @@
 //
 static void DrawTriangle(gl_context_t* context)
 {
+#if 0
     GLfloat vVertices[] = {
         -0.5f,  0.5f, 0.0f,
         -0.5f, -0.5f, 0.0f,
         0.5f, -0.5f, 0.0f
+    };
+#elif 0 
+    rect2d_t rect = rect_midrect_of_size(context->screen_bounds, size_make(context->screen_bounds.size.width/2.0, context->screen_bounds.size.height/2.0));
+    float const l = rect_left(rect);
+    float const r = rect_right(rect);
+    float const t = rect_top(rect);
+    float const b = rect_bottom(rect);
+    log_debug("l=%f, r=%f, t=%f, b=%f", l, r, t, b);
+#else
+    float l = 0;
+    float r = 1920;
+    float t = 1080;
+    float b = 0;
+#endif
+    GLfloat vVertices[] = {
+        l, t, 0,
+        l, b, 0,
+        r, b, 0
     };
 
     // Use the program object

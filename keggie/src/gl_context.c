@@ -10,7 +10,14 @@
 static void gl_context_reset_state(gl_context_t* ctx) {
     gl_context_use_main_program(ctx);
 
-    matrix_t mvp = identity_matrix;
+    matrix_t translate;
+    matrix_t scale;
+    matrix_t mvp;
+
+    // TODO: Cache this. Only need to calculate once on initalization or screen size change.
+    matrix_make_translation(-1, -1, 0, &translate);
+    matrix_make_scale(2.0/ctx->screen_bounds.size.width, 2.0/ctx->screen_bounds.size.height, 1, &scale);
+    matrix_multiply(&translate, &scale, &mvp);
 
     glUniformMatrix4fv(ctx->u_modelViewProjectionMatrix, 1, GL_FALSE, (GLfloat const*)&mvp);
     glUniform4f(ctx->u_fragColor, 1,1,1,1);
@@ -20,6 +27,9 @@ static void gl_context_reset_state(gl_context_t* ctx) {
 }
 
 bool gl_context_initialize(gl_context_t* ctx) {
+
+    ctx->screen_bounds = rect_make(0, 0, ctx->egl_context.screen_width, ctx->egl_context.screen_height);
+
     // Set background color and clear buffers
     glClearColor(1, 1, 1, 1);
     glClear(GL_COLOR_BUFFER_BIT);

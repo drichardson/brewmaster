@@ -1,12 +1,15 @@
 #pragma once
 
 #include "egl_context.h"
+#include "geometry.h"
 
 // gl_context_t - a common OpenGL context for keggie. Built around
 // keggie's shaders, represented by programObject.
 typedef struct
 {
     egl_context_t egl_context;
+
+    rect2d_t screen_bounds;
 
     // keggie's main OpenGL shader program and associated attributes (prefixed with a_)
     // and uniforms (prefixed with u_).

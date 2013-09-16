@@ -1,5 +1,6 @@
 #include "matrix.h"
 #include <math.h>
+#include <assert.h>
 
 matrix_t const identity_matrix = {
     1, 0, 0, 0, // column 1
@@ -9,6 +10,8 @@ matrix_t const identity_matrix = {
 };
 
 void matrix_multiply(matrix_t const* a, matrix_t const* b, matrix_t* r) {
+    assert(a != r && b != r);
+
     GLfloat* d = (GLfloat*)r;
     GLfloat const* m0 = (GLfloat const*)a;
     GLfloat const* m1 = (GLfloat const*)b;

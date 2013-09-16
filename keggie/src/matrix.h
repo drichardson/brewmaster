@@ -13,7 +13,8 @@ typedef struct {
 
 extern matrix_t const identity_matrix;
 
-// Multiply matrix m1 by m2 and place the result in result.
+// Multiply matrix m1 by m2 and place the result in result. result is undefined if it is also used as
+// one of the input parameters.
 void matrix_multiply(matrix_t const* m1, matrix_t const* m2, matrix_t* result);
 
 // Make a translation matrix and put the result in result. This wipes out anything that was previously in result.
