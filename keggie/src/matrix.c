@@ -34,6 +34,13 @@ void matrix_multiply(matrix_t const* a, matrix_t const* b, matrix_t* r) {
     d[15] = m0[3]*m1[12] + m0[7]*m1[13] + m0[11]*m1[14] + m0[15]*m1[15];
 }
 
+void matrix_make_translation(GLfloat xTranslation, GLfloat yTranslation, GLfloat zTranslation, matrix_t* result) {
+    *result = identity_matrix;
+    result->m14 = xTranslation;
+    result->m24 = yTranslation;
+    result->m34 = zTranslation;
+}
+
 void matrix_make_scale(GLfloat xScale, GLfloat yScale, GLfloat zScale, matrix_t* r) {
     *r = identity_matrix;
     r->m11 = xScale;
