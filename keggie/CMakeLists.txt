@@ -28,6 +28,6 @@ file(COPY ${CMAKE_SOURCE_DIR}/shaders DESTINATION ${KEGGIE_BUNDLE_PATH})
 file(COPY ${CMAKE_SOURCE_DIR}/fonts DESTINATION ${KEGGIE_BUNDLE_PATH})
 file(COPY ${CMAKE_SOURCE_DIR}/images DESTINATION ${KEGGIE_BUNDLE_PATH})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${KEGGIE_BUNDLE_PATH})
-add_executable(keggie src/main.c src/texture_loader.c src/shader_loader.c src/egl_context.c src/gl_context.c src/text_rendering.c src/threads.c src/log.c src/bundle.c src/image.c src/paths.c)
+add_executable(keggie src/main.c src/texture_loader.c src/shader_loader.c src/egl_context.c src/gl_context.c src/text_rendering.c src/threads.c src/log.c src/bundle.c src/image.c src/paths.c src/matrix.c)
 target_link_libraries(keggie GLESv2 EGL bcm_host png jpeg freetype)
 

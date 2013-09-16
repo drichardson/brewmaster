@@ -3,8 +3,8 @@
 #include <assert.h>
 #include <limits.h>
 
-#include "GLES2/gl2.h"
-#include "EGL/egl.h"
+#include <GLES2/gl2.h>
+#include <EGL/egl.h>
 
 #include "gl_context.h"
 #include "geometry.h"
@@ -31,12 +31,11 @@ static void DrawTriangle(gl_context_t* context)
     // Use the program object
     gl_context_use_main_program(context);
     glUseProgram(context->mainProgram);
-    GLint fragColor = glGetUniformLocation(context->mainProgram, "u_fragColor"); 
 
     // Load the vertex data
     glVertexAttribPointer(context->a_position, 3, GL_FLOAT, GL_FALSE, 0, vVertices);
     glEnableVertexAttribArray(context->a_position);
-    glUniform4f(fragColor, 1, 1, 0, 1);
+    glUniform4f(context->u_fragColor, 1, 1, 0, 1);
 
     glDrawArrays(GL_TRIANGLES, 0, 3);
     check_gl();
@@ -54,11 +53,10 @@ static void DrawRedBoxAroundScreen(gl_context_t* context)
 
     // Use the program object
     glUseProgram(context->mainProgram);
-    GLint fragColor = glGetUniformLocation(context->mainProgram, "u_fragColor"); 
 
     glVertexAttribPointer(context->a_position, 3, GL_FLOAT, GL_FALSE, 0, boxLines);
     glEnableVertexAttribArray(context->a_position);
-    glUniform4f(fragColor, 1,0,0,1);
+    glUniform4f(context->u_fragColor, 1,0,0,1);
     glDrawArrays(GL_LINE_LOOP, 0, 4);
     check_gl();
 }
@@ -115,7 +113,7 @@ int main(int argc, char const **argv)
     char font_path[PATH_MAX];
     bundle_resource_path(font_path, sizeof(font_path), "fonts/GillSans.ttc");
     //text_render(&context, "This is a test.", font_path, 20.0, 0.0, 0.0);
-    text_render(&context, "d", font_path, 20.0, 0.0, 0.0);
+    text_render(&context, "d", font_path, 30.0, 0.0, 0.0);
 
     eglSwapBuffers(context.egl_context.display, context.egl_context.surface);
 

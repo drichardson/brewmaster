@@ -83,25 +83,14 @@ void image_draw(image_t* img, gl_context_t* ctx, rect2d_t r) {
 
     gl_context_use_main_program(ctx);
 
-    //GLint fragColor = glGetUniformLocation(ctx->mainProgram, "u_fragColor"); 
-    GLint enableTexture = glGetUniformLocation(ctx->mainProgram, "u_enableTexture"); 
-    GLint texture = glGetUniformLocation(ctx->mainProgram, "u_texture");
-    assert(enableTexture != -1);
-    assert(texture != -1);
-
     glVertexAttribPointer(ctx->a_position, 3, GL_FLOAT, GL_FALSE, 0, v);
-    check_gl();
     glEnableVertexAttribArray(ctx->a_position);
-    check_gl();
     glVertexAttribPointer(ctx->a_textureCoordinates, 2, GL_FLOAT, GL_FALSE, 0, toolbarTextureCoordinates);
-    check_gl();
     glEnableVertexAttribArray(ctx->a_textureCoordinates);
-    //glUniform4f(fragColor, 0,1,0,1);
-    glUniform1i(enableTexture, GL_TRUE);
+    glUniform1i(ctx->u_enableTexture, GL_TRUE);
 
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D, image_gl_texture(img));
-    check_gl();
 
     switch(img->format) {
         case GL_ALPHA:
@@ -122,14 +111,10 @@ void image_draw(image_t* img, gl_context_t* ctx, rect2d_t r) {
     }
 
     glDrawArrays(GL_TRIANGLES, 0, 6);
-    check_gl();
-    glUniform1i(enableTexture, GL_FALSE);
-    check_gl();
     glDisableVertexAttribArray(ctx->a_textureCoordinates);
-    check_gl();
 
     glDisable(GL_BLEND);
 
+    check_gl();
 }
-
 

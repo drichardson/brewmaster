@@ -11,8 +11,13 @@ typedef struct
     // keggie's main OpenGL shader program and associated attributes (prefixed with a_)
     // and uniforms (prefixed with u_).
     GLuint mainProgram; 
+
+    // mainProgram attributes
     GLuint a_position;
     GLuint a_textureCoordinates;
+
+    // mainProgram uniforms
+    GLint u_modelViewProjectionMatrix;
     GLint u_fragColor;
     GLint u_texture;
     GLint u_enableTexture;
