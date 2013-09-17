@@ -161,7 +161,7 @@ bool texture_load_png(const char* filename, GLenum* formatOut, GLuint* textureOu
 bool texture_load_jpeg(const char* filename, GLenum *formatOut, GLuint *textureOut, int *width, int *height) {
     FILE* fp = fopen(filename, "rb");
     if (fp == NULL) {
-        log_error("coulnd't open JPEG file %s", filename);
+        log_error("couldn't open JPEG file %s", filename);
         return false;
     }
 
