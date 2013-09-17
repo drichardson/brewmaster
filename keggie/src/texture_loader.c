@@ -158,7 +158,7 @@ bool texture_load_png(const char* filename, GLenum* formatOut, GLuint* textureOu
     return result;
 }
 
-bool texture_load_jpeg(const char* filename, GLenum *formatOut, GLuint *textureOut, int *width, int *height) {
+bool texture_load_jpeg(const char* filename, GLenum *formatOut, GLuint *textureOut, int *widthOut, int *heightOut) {
     FILE* fp = fopen(filename, "rb");
     if (fp == NULL) {
         log_error("couldn't open JPEG file %s", filename);
@@ -187,13 +187,17 @@ bool texture_load_jpeg(const char* filename, GLenum *formatOut, GLuint *textureO
 
     //Now generate the OpenGL texture object
     GLenum const format = GL_RGB;
-    bool result = texture_load_image(pixels, format, textureOut, cinfo.output_width, cinfo.output_height);
+    int width = cinfo.output_width;
+    int height = cinfo.output_height;
+    bool result = texture_load_image(pixels, format, textureOut, width, height);
 
     jpeg_finish_decompress(&cinfo);
     jpeg_destroy_decompress(&cinfo);
 
     if (fp) fclose(fp);
     if (pixels) free(pixels);
+    if (widthOut) *widthOut = width;
+    if (heightOut) *heightOut = height;
     if (formatOut) *formatOut = format;
 
     return result;
