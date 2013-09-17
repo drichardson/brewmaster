@@ -22,25 +22,12 @@
 //
 static void DrawTriangle(gl_context_t* context)
 {
-#if 0
-    GLfloat vVertices[] = {
-        -0.5f,  0.5f, 0.0f,
-        -0.5f, -0.5f, 0.0f,
-        0.5f, -0.5f, 0.0f
-    };
-#elif 0 
     rect2d_t rect = rect_midrect_of_size(context->screen_bounds, size_make(context->screen_bounds.size.width/2.0, context->screen_bounds.size.height/2.0));
     float const l = rect_left(rect);
     float const r = rect_right(rect);
     float const t = rect_top(rect);
     float const b = rect_bottom(rect);
-    log_debug("l=%f, r=%f, t=%f, b=%f", l, r, t, b);
-#else
-    float l = 0;
-    float r = 1920;
-    float t = 1080;
-    float b = 0;
-#endif
+
     GLfloat vVertices[] = {
         l, t, 0,
         l, b, 0,
@@ -62,12 +49,18 @@ static void DrawTriangle(gl_context_t* context)
 
 static void DrawRedBoxAroundScreen(gl_context_t* context)
 {
+    rect2d_t rect = context->screen_bounds;
+    float const l = rect_left(rect);
+    float const r = rect_right(rect);
+    float const t = rect_top(rect);
+    float const b = rect_bottom(rect);
+
     // Draw a yellow 1 pixel box around the entire thing.
     GLfloat boxLines[] = {
-        -1.0, -1.0, 0,
-        -1.0, 1.0, 0,
-        1.0, 1.0, 0,
-        1.0, -1.0, 0
+        l, b, 0,
+        l, t, 0,
+        r, t, 0,
+        r, b, 0
     };
 
     // Use the program object
@@ -83,20 +76,19 @@ static void DrawRedBoxAroundScreen(gl_context_t* context)
 
 static void DrawToolbarBackground(gl_context_t* context)
 {
-    rect2d_t rect;
-    rect.origin.x = -1.0;
-    rect.origin.y = 0.8;
-    rect.size.width = 2;
-    rect.size.height = 0.2;
     image_t* img = bundle_image_named("beer-label-ruination-ipa.jpg");
-    image_draw(img, context, rect);
+    rect2d_t beerLabelRect = rect_make(40, 40, 0, 0);
+    beerLabelRect.size = image_size(img);
+    image_draw(img, context, beerLabelRect);
     image_free(img);
 
-    rect.size.height = 0.8;
-    rect.origin.y = 0;
     img = bundle_image_named("toolbar-background.png");
+    rect2d_t toolbarRect;
+    toolbarRect.size = image_size(img);
+    toolbarRect.origin.x = beerLabelRect.origin.x;
+    toolbarRect.origin.y = rect_top(beerLabelRect) - toolbarRect.size.height;
     //img = bundle_image_named("Untitled-1.png");
-    image_draw(img, context, rect);
+    image_draw(img, context, toolbarRect);
     image_free(img);
 
 }
@@ -132,7 +124,7 @@ int main(int argc, char const **argv)
     char font_path[PATH_MAX];
     bundle_resource_path(font_path, sizeof(font_path), "fonts/GillSans.ttc");
     //text_render(&context, "This is a test.", font_path, 20.0, 0.0, 0.0);
-    text_render(&context, "d", font_path, 30.0, 0.0, 0.0);
+    text_render(&context, "d", font_path, 30.0, 300.0, 300.0);
 
     eglSwapBuffers(context.egl_context.display, context.egl_context.surface);
 

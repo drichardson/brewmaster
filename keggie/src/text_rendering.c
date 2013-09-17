@@ -49,7 +49,9 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
         float h = g->bitmap.rows * sy;
         rect2d_t r = rect_make(x2, y2, w, h);
 #else
-        rect2d_t r = rect_make(0.5, -0.8, 0.2, 0.2);
+        rect2d_t r;
+        r.size = image_size(image);
+        r.origin = point_make(x, y);
 #endif
 
         image_draw(image, ctx, r);
