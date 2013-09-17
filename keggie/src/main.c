@@ -13,7 +13,6 @@
 #include "shader_loader.h"
 #include "texture_loader.h"
 #include "text_rendering.h"
-#include "threads.h"
 #include "log.h"
 #include "bundle.h"
 
@@ -95,8 +94,6 @@ static void DrawToolbarBackground(gl_context_t* context)
 
 int main(int argc, char const **argv)
 {
-    thread_register_main();
-
     gl_context_t context;
     memset(&context, 0, sizeof(context));
 
