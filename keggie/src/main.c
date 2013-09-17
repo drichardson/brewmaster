@@ -123,8 +123,8 @@ int main(int argc, char const **argv)
     
     char font_path[PATH_MAX];
     bundle_resource_path(font_path, sizeof(font_path), "fonts/GillSans.ttc");
-    //text_render(&context, "This is a test.", font_path, 20.0, 0.0, 0.0);
-    text_render(&context, "d", font_path, 30.0, 300.0, 300.0);
+    text_render(&context, "This is a test.", font_path, 30.0, 300.0, 300.0);
+    //text_render(&context, "d", font_path, 30.0, 300.0, 300.0);
 
     eglSwapBuffers(context.egl_context.display, context.egl_context.surface);
 

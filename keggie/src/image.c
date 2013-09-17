@@ -61,6 +61,10 @@ GLuint image_gl_texture(image_t* img) {
 }
 
 void image_draw(image_t* img, gl_context_t* ctx, rect2d_t r) {
+    image_draw_with_options(img, ctx, r, 0);
+}
+
+void image_draw_with_options(image_t* img, gl_context_t* ctx, rect2d_t r, unsigned options_mask) {
     // Draw the toolbar background
     GLfloat v[3*6];
     v[0] = rect_left(r); v[1] = rect_top(r); v[2] = 0;
@@ -70,8 +74,7 @@ void image_draw(image_t* img, gl_context_t* ctx, rect2d_t r) {
     v[12] = rect_left(r); v[13] = rect_top(r); v[14] = 0;
     v[15] = rect_right(r); v[16] = rect_bottom(r); v[17] = 0;
 
-    // TODO: try with indices too
-    GLfloat toolbarTextureCoordinates[] = {
+    static GLfloat const toolbarTextureCoordinates[] = {
         0, 1,
         0, 0,
         1, 0,
@@ -80,11 +83,22 @@ void image_draw(image_t* img, gl_context_t* ctx, rect2d_t r) {
         1, 0
     };
 
+    static GLfloat const toolbarTextureCoordinatesFlipped[] = {
+        0, 0,
+        0, 1,
+        1, 1,
+        1, 0,
+        0, 0,
+        1, 1
+    };
+
+    GLfloat const* textureCoordinates = options_mask & IMAGE_OPTION_FLIPPED ? toolbarTextureCoordinatesFlipped : toolbarTextureCoordinates;
+
     gl_context_use_main_program(ctx);
 
     glVertexAttribPointer(ctx->a_position, 3, GL_FLOAT, GL_FALSE, 0, v);
     glEnableVertexAttribArray(ctx->a_position);
-    glVertexAttribPointer(ctx->a_textureCoordinates, 2, GL_FLOAT, GL_FALSE, 0, toolbarTextureCoordinates);
+    glVertexAttribPointer(ctx->a_textureCoordinates, 2, GL_FLOAT, GL_FALSE, 0, textureCoordinates);
     glEnableVertexAttribArray(ctx->a_textureCoordinates);
     glUniform1i(ctx->u_enableTexture, GL_TRUE);
 

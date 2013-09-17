@@ -42,19 +42,10 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
         }
 
         image_t* image = image_with_pixels(g->bitmap.buffer, GL_ALPHA, g->bitmap.width, g->bitmap.rows);
-#if 0
-        float x2 = x + g->bitmap_left * sx;
-        float y2 = -y - g->bitmap_top * sy;
-        float w = g->bitmap.width * sx;
-        float h = g->bitmap.rows * sy;
-        rect2d_t r = rect_make(x2, y2, w, h);
-#else
         rect2d_t r;
         r.size = image_size(image);
         r.origin = point_make(x, y);
-#endif
-
-        image_draw(image, ctx, r);
+        image_draw_with_options(image, ctx, r, IMAGE_OPTION_FLIPPED);
         image_free(image);
 
         x += (g->advance.x >> 6) * sx;
