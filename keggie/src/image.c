@@ -41,7 +41,6 @@ image_t* image_with_path(char const* path) {
 image_t* image_with_pixels(unsigned char const* pixels, GLenum format, GLsizei width, GLsizei height) {
     GLuint texture;
     if(!texture_load_image(pixels, format, &texture, width, height)) return NULL;
-    log_debug("Using texture %d", texture);
     return image_constructor_base(texture, format, width, height);
 }
 
