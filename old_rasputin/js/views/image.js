@@ -48,11 +48,14 @@ Backbone.Form.editors.Image = Backbone.Form.editors.Base.extend({
 
 		// Keep the data on the img teg
     getValue: function() {
-				return this.$("#image-preview").attr("src");
+				// return this.$("#image-preview").attr("src");
+				// return { displayType: "Image", dataURL: this.$("#image-preview").attr("src")}
+				return this.value
     },
 
     setValue: function(value) {
-				this.$("#image-preview").attr("src", value);
+				this.value = value;
+				this.$("#image-preview").attr("src", value.dataURL);
     },
 
     focus: function() {
@@ -81,8 +84,7 @@ Backbone.Form.editors.Image = Backbone.Form.editors.Base.extend({
 		    // closure to capture the file information.
 		    reader.onload = (function(theFile,that) {
 		        return function(e) {
-		            // Set the value on the 
-								that.setValue(e.target.result);
+								that.setValue({ typeImage: true, dataURL: e.target.result});
 		        };
 		    })(file,this);
 

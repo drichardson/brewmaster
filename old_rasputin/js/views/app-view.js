@@ -48,7 +48,14 @@ var app = app || {};
 		_updateRoute: function() {
 				
 				if (app.currentState['isCollection']) {
-					// render list template
+					var options = { 
+						model: app.currentState['instance'],
+						collection: app.currentState['collection'],
+						isEditing: app.currentState['isEditing']
+					};
+					var view = new app.BeveragesView(options);
+					
+					$('#main').html(view.render().el)
 				} else {
 					var view = new app.FormView({ 
 						model: app.currentState['instance'],

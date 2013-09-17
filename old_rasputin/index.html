@@ -29,10 +29,34 @@
 			<button type="button" id="save-button">Save</button>
 		</script>
 		
+		<script id="beverage-row-template" type="text/x-handlebars-template">
+				<td><img height="32" src={{image.dataURL}}></td>
+				<td>{{name}}</td>
+				<td>{{producer.name}}</td>
+				<td>{{abv}}</td>
+				<td>{{ibu}}</td>
+		</script>		
+		
+		<script id="model-list-template" type="text/x-handlebars-template">
+			<div id="table">
+				<table class="table">
+					<thead>
+					  <tr>
+						{{#each this}}
+							<th>{{this}}</th>
+						{{/each}}
+					  </tr>
+					</thead>
+					<tbody id="table-body">
+					</tbody>
+				</table>
+			</div>
+		</script>
+		
 		<script id="file-upload-template" type="text/x-handlebars-template">
 			<div class="fileUploadView">
 				<div>
-					<img id="image-preview" class="or-image-preview" src={{image}}>
+					<img id="image-preview" class="or-image-preview" src={{image.dataURL}}>
 				</div>
 			  <input id="fileUpload" name="file" type="file"/>
 			</div>
@@ -66,6 +90,7 @@
 		<script src="js/collections/tap_entry.js"></script>
 		
 		<script src="js/views/form-view.js"></script>
+		<script src="js/views/list-view.js"></script>
 		<script src="js/views/beverages-view.js"></script>
 		<script src="js/views/image.js"></script>
 		<script src="js/views/app-view.js"></script>

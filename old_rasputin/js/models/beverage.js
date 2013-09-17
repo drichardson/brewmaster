@@ -29,7 +29,7 @@ var app = app || {};
 		initialize: function() {
 			this.schema = {
 				image: 	'Image', 
-				name:		'Text',
+				name:		{ type: 'Text' } ,
 				producer: { type: 'NestedModel', model: app.Producer },
 				beverageType: { type: 'NestedModel', model: app.BeverageType },
 				beverageStyle: { type: 'NestedModel', model: app.BeverageStyle },

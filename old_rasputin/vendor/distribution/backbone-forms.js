@@ -1250,7 +1250,6 @@ Form.editors.Text = Form.Editor.extend({
    */
   render: function() {
     this.setValue(this.value);
-
     return this;
   },
 
