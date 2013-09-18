@@ -76,7 +76,7 @@ static void DrawRedBoxAroundScreen(gl_context_t* context)
 static void DrawToolbarBackground(gl_context_t* context)
 {
     image_t* img = bundle_image_named("beer-label-ruination-ipa.jpg");
-    rect2d_t beerLabelRect = rect_make(40, 40, 0, 0);
+    rect2d_t beerLabelRect = rect_make(0, 0, 0, 0);
     beerLabelRect.size = image_size(img);
     image_draw(img, context, beerLabelRect);
     image_free(img);
@@ -86,7 +86,6 @@ static void DrawToolbarBackground(gl_context_t* context)
     toolbarRect.size = image_size(img);
     toolbarRect.origin.x = beerLabelRect.origin.x;
     toolbarRect.origin.y = rect_top(beerLabelRect) - toolbarRect.size.height;
-    //img = bundle_image_named("Untitled-1.png");
     image_draw(img, context, toolbarRect);
     image_free(img);
 
