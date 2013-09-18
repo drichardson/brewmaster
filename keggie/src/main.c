@@ -16,6 +16,7 @@
 #include "log.h"
 #include "bundle.h"
 
+#if 0
 // For debugging
 static void DrawRedBoxAroundRect(gl_context_t* context, rect2d_t rect)
 {
@@ -41,6 +42,17 @@ static void DrawRedBoxAroundRect(gl_context_t* context, rect2d_t rect)
     glDrawArrays(GL_LINE_LOOP, 0, 4);
     check_gl();
 }
+#endif
+
+static void DrawImageResourceAtPoint(gl_context_t* context, char const* image_name, GLfloat xFromLeft, GLfloat yFromTop) {
+    image_t* img = bundle_image_named(image_name);
+    rect2d_t r;
+    r.size = image_size(img);
+    r.origin.x = xFromLeft;
+    r.origin.y = rect_top(context->screen_bounds) - r.size.height - yFromTop;
+    image_draw(img, context, r);
+    image_free(img);
+}
 
 static void DrawBeerLabel(gl_context_t* context, image_t* img) {
     rect2d_t r = rect_make(0, 0, 0, 0);
@@ -50,12 +62,42 @@ static void DrawBeerLabel(gl_context_t* context, image_t* img) {
 
 static void DrawToolbarBackground(gl_context_t* context)
 {
-    image_t* img = bundle_image_named("toolbar-background.png");
-    rect2d_t r;
-    r.size = image_size(img);
-    r.origin.y = rect_top(context->screen_bounds) - r.size.height;
-    image_draw(img, context, r);
+    DrawImageResourceAtPoint(context, "toolbar-background.png", 0, 0);
+}
+
+static void DrawGear(gl_context_t* context) {
+    //DrawImageResourceAtPoint(context, "toolbar-background.png", point_make(0, 0));
+}
+
+static void DrawSelectedTap(gl_context_t* context) {
+    //DrawImageResourceAtPoint(context, "toolbar-background.png", point_make(0, 0));
+}
+
+static void DrawRightLabel(gl_context_t* context, char const* label) {
+    point2d_t point = point_make(192, rect_top(context->screen_bounds) - 22);
+    char font_path[PATH_MAX];
+    bundle_resource_path(font_path, sizeof(font_path), "fonts/GillSans.ttc");
+    text_render(context, label, font_path, 20, point, rgba_make(1,1,1,0)); 
+}
+
+static void Draw(gl_context_t* context) {
+    // Clear the color buffer
+    // Set background color and clear buffers
+    glClearColor(1, 1, 1, 1);
+    glClear(GL_COLOR_BUFFER_BIT);
+    check_gl();
+
+    image_t* img = bundle_image_named("beer-label-ruination-ipa.jpg");
+    DrawBeerLabel(context, img);
     image_free(img);
+
+    // TODO:DOUG Add blur
+    DrawToolbarBackground(context);
+    DrawGear(context);
+    DrawSelectedTap(context);
+    DrawRightLabel(context, "54\xE2\x84\x89");
+
+    gl_context_swap_buffers(context);
 }
 
 int main(int argc, char const **argv)
@@ -74,24 +116,13 @@ int main(int argc, char const **argv)
         exit(1);
     }
 
-    // Clear the color buffer
-    // Set background color and clear buffers
-    glClearColor(1, 1, 1, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-    check_gl();
-
-    image_t* img = bundle_image_named("beer-label-ruination-ipa.jpg");
-    DrawBeerLabel(&context, img);
-    image_free(img);
-
-    DrawToolbarBackground(&context);
-    
-    char font_path[PATH_MAX];
-    bundle_resource_path(font_path, sizeof(font_path), "fonts/GillSans.ttc");
-    text_render(&context, "This is a test.", font_path, 30.0, point_make(300, 300), rgba_make(1,0,0,0));
-    //text_render(&context, "d", font_path, 30.0, 300.0, 300.0);
-
-    eglSwapBuffers(context.egl_context.display, context.egl_context.surface);
+    // Use fake screen bounds when developing in a TV
+    if (context.screen_bounds.size.width == 1920) {
+        log_debug("Artificially setting screen size to 240x320");
+        context.screen_bounds = rect_make(0, 0, 240, 320);
+    }
+        
+    Draw(&context);
 
     while(1) sleep(10);
 

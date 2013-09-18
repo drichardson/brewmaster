@@ -31,3 +31,5 @@ bool gl_context_initialize(gl_context_t* ctx);
 // Select the mainProgram and reset it's attributes and uniforms back to their default values.
 void gl_context_use_main_program(gl_context_t *ctx);
 
+void gl_context_swap_buffers(gl_context_t* ctx);
+

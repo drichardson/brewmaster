@@ -126,3 +126,7 @@ void gl_context_use_main_program(gl_context_t *ctx) {
     glUseProgram(ctx->mainProgram);
 }
 
+void gl_context_swap_buffers(gl_context_t* ctx) {
+    eglSwapBuffers(ctx->egl_context.display, ctx->egl_context.surface);
+}
+
