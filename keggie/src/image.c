@@ -11,6 +11,7 @@ static image_t* image_constructor_base(GLuint texture, GLenum format, GLsizei wi
     result->width = width;
     result->height = height;
     result->format = format;
+    result->tint = rgba_make(0,0,0,0);
 
     return result;
 }
@@ -96,6 +97,8 @@ void image_draw_with_options(image_t* img, gl_context_t* ctx, rect2d_t r, unsign
 
     gl_context_use_main_program(ctx);
 
+    glUniform4f(ctx->u_fragColor, img->tint.r, img->tint.g, img->tint.b, img->tint.a);
+
     glVertexAttribPointer(ctx->a_position, 3, GL_FLOAT, GL_FALSE, 0, v);
     glEnableVertexAttribArray(ctx->a_position);
     glVertexAttribPointer(ctx->a_textureCoordinates, 2, GL_FLOAT, GL_FALSE, 0, textureCoordinates);
@@ -129,5 +132,9 @@ void image_draw_with_options(image_t* img, gl_context_t* ctx, rect2d_t r, unsign
     glDisable(GL_BLEND);
 
     check_gl();
+}
+
+void image_set_tint(image_t* img, rgba_t tint) {
+    img->tint = tint;
 }
 

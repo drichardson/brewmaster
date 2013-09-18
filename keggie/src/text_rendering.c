@@ -7,13 +7,13 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
-void text_render(gl_context_t* ctx, char const* text, char const* font, float font_size, GLfloat x, GLfloat y) {
+void text_render(gl_context_t* ctx, char const* text, char const* font, float font_size, point2d_t point, rgba_t color) {
     FT_Library library = NULL;
     FT_Face face = NULL;
     FT_Error error;
 
     error = FT_Init_FreeType(&library);
-   if (error != 0) {
+    if (error != 0) {
         log_error("Error initializing FreeType library. error = %x", error);
         goto done;
     }
@@ -42,14 +42,15 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
         }
 
         image_t* image = image_with_pixels(g->bitmap.buffer, GL_ALPHA, g->bitmap.width, g->bitmap.rows);
+        image_set_tint(image, color);
         rect2d_t r;
         r.size = image_size(image);
-        r.origin = point_make(x, y);
+        r.origin = point_make(point.x, point.y);
         image_draw_with_options(image, ctx, r, IMAGE_OPTION_FLIPPED);
         image_free(image);
 
-        x += (g->advance.x >> 6) * sx;
-        y += (g->advance.y >> 6) * sy; 
+        point.x += (g->advance.x >> 6) * sx;
+        point.y += (g->advance.y >> 6) * sy; 
     }
 
 done:
