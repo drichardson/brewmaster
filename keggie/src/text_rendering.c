@@ -7,8 +7,6 @@
 
 #include <ft2build.h>
 #include FT_FREETYPE_H
-#include FT_TRUETYPE_TABLES_H
-#include FT_TRUETYPE_IDS_H
 
 // Convert a UTF-8 string to a UTF-32 array. The returned array must be freed.
 static bool utf8_to_utf32(char const* utf8, uint32_t** utf32out, size_t* utf32count);
@@ -29,39 +27,6 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
         log_error("Error reading font face from %s. error = %x", font, error);
         goto done;
     }
-
-#if 0
-    {
-        // DEBUG: log the character maps
-        int cmi = 0;
-        log_debug("Font %s has %d charmaps", font, face->num_charmaps);
-        log_debug("TT_PLATFORM_MACINTOSH = %d", TT_PLATFORM_MACINTOSH);
-        for(cmi = 0; cmi < face->num_charmaps; cmi++) {
-            FT_CharMap r = face->charmaps[cmi];
-            int c1 = (r->encoding >> 24) & 0xff;
-            int c2 = (r->encoding >> 16) & 0xff;
-            int c3 = (r->encoding >> 8) & 0xff;
-            int c4 = (r->encoding >> 0) & 0xff;
-            log_debug("charmap %d: encoding=%x (%c%c%c%c), platform_id=%hd, encoding_id=%hd, Language ID=%lu", cmi, r->encoding, c1, c2, c3, c4, r->platform_id, r->encoding_id, FT_Get_CMap_Language_ID(r));
-        }
-    }
-#endif
-
-#if 0
-    // DEBUG: Enumerate character codes in font. Useful to figure out why a specific unicode
-    // character isn't rendering like you expect (i.e., it may not be in the font).
-    {
-        FT_ULong  charcode;                                              
-        FT_UInt   gindex;                                                
-
-        log_debug("Character codes for font %s", font);
-        charcode = FT_Get_First_Char( face, &gindex );                   
-        while (gindex != 0) {
-            log_debug("  charcode: %lx, gindex: %d", charcode, gindex);
-            charcode = FT_Get_Next_Char( face, charcode, &gindex );
-        } 
-    }
-#endif
 
     error = FT_Select_Charmap(face, FT_ENCODING_UNICODE);
     if (error != 0) {
