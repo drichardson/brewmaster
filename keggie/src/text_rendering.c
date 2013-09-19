@@ -8,6 +8,10 @@
 #include <ft2build.h>
 #include FT_FREETYPE_H
 
+// Kerning doesn't work yet. I'm not sure there is kerning info in my font file. Free Type only supports
+// kern tables, but kerning info can also be provided using gpos tables.
+#define USE_KERNING 0
+
 // Convert a UTF-8 string to a UTF-32 array. The returned array must be freed.
 static bool utf8_to_utf32(char const* utf8, uint32_t** utf32out, size_t* utf32count);
 
@@ -42,7 +46,9 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
     }
 
     FT_GlyphSlot g = face->glyph;
-
+#if USE_KERNING
+    FT_UInt previous_glyph_index = 0;
+#endif
     size_t utf32count = 0;
     bool rc = utf8_to_utf32(text, &utf32, &utf32count);
     assert(rc); // Should I even care about the return value here or just display what I can?
@@ -50,6 +56,10 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
     size_t i; // start at 1 instead of 0 to skip the unicode BOM at the beginning.
     for(i = 1; i < utf32count; ++i) {
         FT_UInt glyph_index= FT_Get_Char_Index(face, utf32[i]);
+#if USE_KERNING
+        FT_UInt glyph_index_for_kerning = previous_glyph_index;
+        previous_glyph_index = glyph_index;
+#endif
         if (glyph_index == 0) {
             log_debug("Font error: couldn't get glyph index for character code %x at index %d", utf32[i], i);
             continue;
@@ -64,6 +74,16 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
             log_error("Font error: render glyph failed with %x", error);
             continue;
         }
+
+#if USE_KERNING
+        FT_Vector akerning;
+        akerning.x = akerning.y = 0;
+        if (glyph_index_for_kerning && glyph_index) {
+            error = FT_Get_Kerning(face, glyph_index_for_kerning, glyph_index, FT_KERNING_DEFAULT, &akerning);
+            if (error) log_error("Font error: get kerning failed with %x", error);
+            else log_debug("kerning x=%ld, y=%ld", akerning.x, akerning.y);
+        }
+#endif
 
         image_t* image = image_with_pixels(g->bitmap.buffer, GL_ALPHA, g->bitmap.width, g->bitmap.rows);
         image_set_tint(image, color);
