@@ -15,6 +15,7 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
     FT_Library library = NULL;
     FT_Face face = NULL;
     FT_Error error;
+    uint32_t *utf32 = NULL;
 
     error = FT_Init_FreeType(&library);
     if (error != 0) {
@@ -42,7 +43,6 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
 
     FT_GlyphSlot g = face->glyph;
 
-    uint32_t *utf32 = NULL;
     size_t utf32count = 0;
     bool rc = utf8_to_utf32(text, &utf32, &utf32count);
     assert(rc); // Should I even care about the return value here or just display what I can?
