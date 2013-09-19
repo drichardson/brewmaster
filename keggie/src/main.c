@@ -95,7 +95,7 @@ static void Draw(gl_context_t* context) {
     DrawToolbarBackground(context);
     DrawGear(context);
     DrawSelectedTap(context);
-    DrawRightLabel(context, "54\xE2\x84\x89");
+    DrawRightLabel(context, "54\xc2\xb0" "F");
 
     gl_context_swap_buffers(context);
 }
