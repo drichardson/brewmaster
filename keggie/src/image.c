@@ -1,53 +1,62 @@
 #include "image.h"
 #include "texture_loader.h"
+#include "png_reader.h"
+#include "jpeg_reader.h"
 #include "opengl_utilities.h"
 #include "paths.h"
 #include <assert.h>
 #include "log.h"
 
-static image_t* image_constructor_base(GLuint texture, GLenum format, GLsizei width, GLsizei height) {
-    image_t* result = (image_t*)calloc(sizeof(image_t), 1);
-    result->texture = texture;
-    result->width = width;
-    result->height = height;
-    result->format = format;
-    result->tint = rgba_make(0,0,0,0);
+#define INVALID_TEXTURE ((GLuint)0)
 
-    return result;
+static size_t bytes_per_pixel_for_gl_format(GLenum format);
+
+image_t* image_with_bytes(void* bytes, GLenum format, GLsizei width, GLsizei height, unsigned options) {
+    // assert if IMAGE_OPTION_COPY and IMAGE_OPTION_NO_FREE set because this will leak.
+    assert(!((options & IMAGE_OPTION_COPY) && (options & IMAGE_OPTION_NO_FREE)));
+
+    image_t* img = (image_t*)calloc(sizeof(image_t), 1);
+    img->texture = INVALID_TEXTURE;
+    img->width = width;
+    img->height = height;
+    img->format = format;
+    img->tint = rgba_make(0,0,0,0);
+    img->options = options;
+
+    if (options & IMAGE_OPTION_COPY) {
+        size_t bytes_per_pixel = bytes_per_pixel_for_gl_format(format);
+        size_t total_bytes = width * height * bytes_per_pixel;
+        img->bytes = malloc(total_bytes);
+        memcpy(img->bytes, bytes, total_bytes);
+    } else {
+        img->bytes = bytes;
+    }
+    return img;
 }
 
-static image_t* image_constructor(char const* filename, bool (*texture_loader)(const char*,GLenum*,GLuint*,int*,int*)) {
-    // TODO:DOUG Probably better to load the image and convert to texture as needed.
-    // There are only a certain number of texture units and we don't want to use them
-    // all up. May need a texture unit manager that has a LRU cache for images.
-    int w, h;
-    GLuint texture;
-    GLenum format;
-    if (!texture_loader(filename, &format, &texture, &w, &h)) return NULL;
-    return image_constructor_base(texture, format, w, h);
+void image_free(image_t* img) {
+    if (img->texture != INVALID_TEXTURE) glDeleteTextures(1, &img->texture);
+    if (!(img->options & IMAGE_OPTION_NO_FREE)) free(img);
+}
+
+static image_t* image_with_path_helper(char const* filename, bool (*image_reader)(const char*,GLenum*,unsigned char**,int*,int*)) {
+    int w = 0, h = 0;
+    unsigned char* bytes = NULL;
+    GLenum format = 0;
+    if (!image_reader(filename, &format, &bytes, &w, &h)) return NULL;
+    return image_with_bytes(bytes, format, w, h, 0);
 }
 
 image_t* image_with_path(char const* path) {
    char const* extension = path_extension(path); 
    if (extension) {
        if(strcasecmp(extension, "png") == 0) {
-           return image_constructor(path, texture_load_png);
+           return image_with_path_helper(path, read_png_file);
        } else if(strcasecmp(extension, "jpg") == 0 || strcasecmp(extension, "jpeg") == 0) {
-           return image_constructor(path, texture_load_jpeg);
+           return image_with_path_helper(path, read_jpeg_file);
        }
    }
    return NULL;
-}
-
-image_t* image_with_pixels(unsigned char const* pixels, GLenum format, GLsizei width, GLsizei height) {
-    GLuint texture;
-    if(!texture_load_image(pixels, format, &texture, width, height)) return NULL;
-    return image_constructor_base(texture, format, width, height);
-}
-
-void image_free(image_t* img) {
-    glDeleteTextures(1, &img->texture);
-    free(img);
 }
 
 size2d_t image_size(image_t* img) {
@@ -57,7 +66,12 @@ size2d_t image_size(image_t* img) {
     return result;
 }
 
-GLuint image_gl_texture(image_t* img) {
+static GLuint image_gl_texture(image_t* img) {
+    if (img->texture == INVALID_TEXTURE) {
+        bool rc = texture_load_image(img->bytes, img->format, &img->texture, img->width, img->height);
+        assert(rc);
+    }
+
     return img->texture;
 }
 
@@ -93,7 +107,7 @@ void image_draw_with_options(image_t* img, gl_context_t* ctx, rect2d_t r, unsign
         1, 1
     };
 
-    GLfloat const* textureCoordinates = options_mask & IMAGE_OPTION_FLIPPED ? toolbarTextureCoordinatesFlipped : toolbarTextureCoordinates;
+    GLfloat const* textureCoordinates = options_mask & IMAGE_DRAW_OPTION_FLIPPED ? toolbarTextureCoordinatesFlipped : toolbarTextureCoordinates;
 
     gl_context_use_main_program(ctx);
 
@@ -136,5 +150,18 @@ void image_draw_with_options(image_t* img, gl_context_t* ctx, rect2d_t r, unsign
 
 void image_set_tint(image_t* img, rgba_t tint) {
     img->tint = tint;
+}
+
+static size_t bytes_per_pixel_for_gl_format(GLenum format) {
+    switch(format) {
+        case GL_RGBA:
+            return 4;
+        case GL_RGB:
+            return 3;
+        case GL_ALPHA:
+            return 1;
+    }
+    assert(0);
+    return 4;
 }
 

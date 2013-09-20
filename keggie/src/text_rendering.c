@@ -85,14 +85,14 @@ void text_render(gl_context_t* ctx, char const* text, char const* font, float fo
         }
 #endif
 
-        image_t* image = image_with_pixels(g->bitmap.buffer, GL_ALPHA, g->bitmap.width, g->bitmap.rows);
+        image_t* image = image_with_bytes(g->bitmap.buffer, GL_ALPHA, g->bitmap.width, g->bitmap.rows, IMAGE_OPTION_NO_FREE);
         image_set_tint(image, color);
         rect2d_t r;
         r.size = image_size(image);
         // log_debug("g->bitmap.rows = %d, g->bitmap_top = %d, g->bitmap_left = %d", g->bitmap.rows, g->bitmap_top, g->bitmap_left);
         // Adjust point.y so that small items, like the degrees symbol, are positioned correctly.
         r.origin = point_make(point.x + g->bitmap_left, point.y + (g->bitmap_top - g->bitmap.rows));
-        image_draw_with_options(image, ctx, r, IMAGE_OPTION_FLIPPED);
+        image_draw_with_options(image, ctx, r, IMAGE_DRAW_OPTION_FLIPPED);
         image_free(image);
 
         // x and y advanced given in 1/64th of pixels, so divide by 64.
