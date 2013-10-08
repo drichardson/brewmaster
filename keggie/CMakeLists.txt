@@ -18,6 +18,16 @@ set(CMAKE_C_FLAGS_DEBUG "-O0 -g")
 
 set(RASPI_INCLUDES /opt/vc/include/ /opt/vc/include/interface/vcos/pthreads /opt/vc/include/interface/vmcs_host/linux)
 
+set(TURBOJPEG "/opt/local/lib/libjpeg.so")
+
+if(EXISTS ${TURBOJPEG})
+    set(LIBJPEG ${TURBOJPEG})
+    message(STATUS "Using TurboJPEG at ${LIBJPEG}")
+else()
+    set(LIBJPEG jpeg)
+    message(STATUS "Using default JPEG library")
+endif()
+
 include_directories(/usr/include/freetype2 ${RASPI_INCLUDES})
 link_directories(/opt/vc/lib)
 
@@ -29,5 +39,5 @@ file(COPY ${CMAKE_SOURCE_DIR}/fonts DESTINATION ${KEGGIE_BUNDLE_PATH})
 file(COPY ${CMAKE_SOURCE_DIR}/images DESTINATION ${KEGGIE_BUNDLE_PATH})
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${KEGGIE_BUNDLE_PATH})
 add_executable(keggie src/main.c src/texture_loader.c src/shader_loader.c src/egl_context.c src/gl_context.c src/text_rendering.c src/log.c src/bundle.c src/image.c src/png_reader.c src/jpeg_reader.c src/paths.c src/matrix.c src/debug.c)
-target_link_libraries(keggie GLESv2 EGL bcm_host png jpeg freetype)
+target_link_libraries(keggie GLESv2 EGL bcm_host png ${LIBJPEG} freetype)
 
