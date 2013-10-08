@@ -13,7 +13,7 @@
 
 #include "debug.h"
 
-#define TIME_LOAD 0
+#define TIME_LOAD 1
 #define USE_MMAP 1
 
 bool read_jpeg_file(const char* filename, GLenum* formatOut, unsigned char** pixelsOut, int *widthOut, int *heightOut) {

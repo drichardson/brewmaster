@@ -3,8 +3,17 @@
 #include <png.h>
 #include <stdlib.h>
 #include "log.h"
+#include "debug.h"
+
+#define USE_TIMER 0
 
 bool read_png_file(const char* filename, GLenum* formatOut, unsigned char** pixels, int *widthOut, int *heightOut) {
+
+#if USE_TIMER
+    debug_timer timer;
+    debug_timer_init(&timer);
+#endif
+
     //header for testing if it is a png
     png_byte header[8];
 
@@ -137,6 +146,10 @@ bool read_png_file(const char* filename, GLenum* formatOut, unsigned char** pixe
     } else {
         free(image_data);
     }
+
+#if USE_TIMER
+    debug_timer_log(&timer, "Loaded PNG filename %s", filename);
+#endif
 
     return true;
 }
