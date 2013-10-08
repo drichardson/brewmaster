@@ -13,6 +13,7 @@ the client browser.
 Configuring Raspberri Pi
 ------------------------
 - sudo apt-get install go vim git clang libdispatch-dev cmake libjansson-dev libcurl4-nss-dev libopencv-imgproc-dev
+- install TurboJPEG using: ./configure --without-turbojpeg --with-jpeg8 --without-java  --prefix=/opt/local
 - optional packages (for examples and vim): cscope libcairo2-dev 
 - Use raspi-config to use the entire SD card
 - Your raspi should be booting to terminal. If it is
