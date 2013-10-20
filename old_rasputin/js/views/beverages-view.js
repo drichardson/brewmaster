@@ -1,9 +1,12 @@
-var app = app || {};
-
-(function ($) {
+define([
+  'jquery', 
+  'backbone',
+	'handlebars',
+	'/views/list-view',
+], function($, Backbone, Handlebars, List) {
 	'use strict';
 
-	app.BeveragesItemView = app.ListItemView.extend({
+	var beveragesItemView = List.ListItemView.extend({
 		
 		template: Handlebars.compile( $("#beverage-row-template").html() ),
 		
@@ -11,12 +14,13 @@ var app = app || {};
 
 	// Beverages List View
 	// --------------
-	app.BeveragesView = app.ListView.extend({
+	var beveragesView = List.ListView.extend({
 		
 		fields: ['Image', 'Name', 'Brewery', 'ABV', 'IBU'],
 		
-		itemView: app.BeveragesItemView
+		itemView: beveragesItemView
 		
 	});
 	
-})(jQuery);
+	return beveragesView;
+});

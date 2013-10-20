@@ -1,15 +1,24 @@
-var app = app || {};
-
-(function ($) {
+define([
+  'jquery', 
+  'backbone',
+	'handlebars',
+	'models/beverage',
+	'backbone-forms'
+], function($, Backbone, Handlebars, Beverage) {
 	'use strict';
 
 	// Generic Form View
 	// --------------
-	app.FormView = Backbone.View.extend({
+	var formView = Backbone.View.extend({
 		
 		template: Handlebars.compile( $("#model-edit-template").html() ),
 		
-		initialize: function() {
+		initialize: function(options) {
+			options = options || {};
+	    Backbone.View.prototype.initialize.call(this, options);
+	    
+	    _.extend(this, _.pick(options, 'model', 'collection', 'isEditing'));
+			debugger;
 			this.formView = new Backbone.Form({ model: this.model });
 		},
 		
@@ -40,4 +49,5 @@ var app = app || {};
 		
 	});
 	
-})(jQuery);
+	return formView;
+});

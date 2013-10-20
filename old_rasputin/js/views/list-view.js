@@ -1,11 +1,13 @@
-var app = app || {};
-
-(function ($) {
+define([
+  'jquery', 
+  'backbone',
+	'handlebars',
+], function($, Backbone, Handlebars) {
 	'use strict';
 
 	// Generic List Item View
 	// --------------
-	app.ListItemView = Backbone.View.extend({
+	var listItemView = Backbone.View.extend({
 		
 		tagName: 'tr',
 				
@@ -20,7 +22,7 @@ var app = app || {};
 
 	// Generic List View
 	// --------------
-	app.ListView = Backbone.View.extend({
+	var listView = Backbone.View.extend({
 		
 		initialize: function(options) {
 			options = options || {};
@@ -79,4 +81,9 @@ var app = app || {};
 		
 	});
 	
-})(jQuery);
+	return {
+		ListView: listView,
+		ListItemView: listItemView
+	};
+	
+});
