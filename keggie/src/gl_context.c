@@ -30,12 +30,6 @@ bool gl_context_initialize(gl_context_t* ctx) {
 
     ctx->screen_bounds = rect_make(0, 0, ctx->egl_context.screen_width, ctx->egl_context.screen_height);
 
-    // Set background color and clear buffers
-    glClearColor(1, 1, 1, 1);
-    glClear(GL_COLOR_BUFFER_BIT);
-
-    check_gl();
- 
     GLuint vertexShader;
     GLuint fragmentShader;
     GLuint programObject;
@@ -114,6 +108,9 @@ bool gl_context_initialize(gl_context_t* ctx) {
     // Store the program object
     ctx->mainProgram = programObject;
 
+    // Set the viewport
+    glViewport(0, 0, ctx->egl_context.screen_width, ctx->egl_context.screen_height);
+
     // Make sure there weren't any gl errors missed before returning.
     check_gl();
 
@@ -127,5 +124,9 @@ void gl_context_use_main_program(gl_context_t *ctx) {
     // Reset variables back to known state.
 
     glUseProgram(ctx->mainProgram);
+}
+
+void gl_context_swap_buffers(gl_context_t* ctx) {
+    eglSwapBuffers(ctx->egl_context.display, ctx->egl_context.surface);
 }
 
