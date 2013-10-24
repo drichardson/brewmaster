@@ -29,7 +29,7 @@
 		
 		<script id="beverage-row-template" type="text/x-handlebars-template">
 				<td><img height="32" src={{image.dataURL}}></td>
-				<td>{{name}}</td>
+				<td><a href='#beverage/{{id}}'>{{name}}</a></td>
 				<td>{{producer.name}}</td>
 				<td>{{abv}}</td>
 				<td>{{ibu}}</td>
@@ -37,31 +37,31 @@
 		
 		<script id="beverage-style-row-template" type="text/x-handlebars-template">
 				<td><img height="32" src={{image.dataURL}}></td>
-				<td>{{name}}</td>
+				<td><a href='#beverage-style/{{id}}'>{{name}}</a></td>
 				<td>{{description}}</td>
 		</script>
 		
 		<script id="beverage-type-row-template" type="text/x-handlebars-template">
 				<td><img height="32" src={{image.dataURL}}></td>
-				<td>{{name}}</td>
+				<td><a href='#beverage-type/{{id}}'>{{name}}</a></td>
 		</script>
 		
 		<script id="producer-row-template" type="text/x-handlebars-template">
 				<td><img height="32" src={{image.dataURL}}></td>
-				<td>{{name}}</td>
+				<td><a href='#producer/{{id}}'>{{name}}</a></td>
 				<td>{{location}}</td>
 				<td>{{established}}</td>
 		</script>
 		
 		<script id="keg-type-row-template" type="text/x-handlebars-template">
 				<td><img height="32" src={{image.dataURL}}></td>
-				<td>{{name}}</td>
+				<td><a href='#keg-type/{{id}}'>{{name}}</a></td>
 				<td>{{capacity}}</td>
 		</script>
 		
 		<script id="tap-entry-row-template" type="text/x-handlebars-template">
 				<td><img height="32" src={{image.dataURL}}></td>
-				<td>{{name}}</td>
+				<td><a href='#tap-entry/{{id}}'>{{name}}</a></td>
 				<td>{{producer.name}}</td>
 				<td>{{abv}}</td>
 				<td>{{ibu}}</td>
