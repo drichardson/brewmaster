@@ -2,7 +2,7 @@ define([
   'jquery', 
   'backbone',
 	'handlebars',
-	'/views/list-view',
+	'views/list-view',
 ], function($, Backbone, Handlebars, List) {
 	'use strict';
 

@@ -18,7 +18,6 @@ define([
 	    Backbone.View.prototype.initialize.call(this, options);
 	    
 	    _.extend(this, _.pick(options, 'model', 'collection', 'isEditing'));
-			debugger;
 			this.formView = new Backbone.Form({ model: this.model });
 		},
 		
@@ -27,6 +26,9 @@ define([
 		},
 		
 		saveModel: function() {
+			
+			debugger;
+			
 			this.formView.commit();
 			
 			// Add it to the collection so it knows to use localstorage to save

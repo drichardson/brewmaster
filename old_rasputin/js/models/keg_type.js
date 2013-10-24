@@ -10,6 +10,14 @@ function($, Backbone, Associations, Store, Image) {
 			image: 'Image',
 			capacity: 'Number'
 		},
+		
+		relations: [{
+			type: Backbone.Many,
+			key: 'tapEntry',
+			collectionType: function() {
+				return require('models/tap_entry').collection;
+			}
+		}],
 
 		defaults: {
 			name: '',

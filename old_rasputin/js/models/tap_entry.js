@@ -19,6 +19,12 @@ function($, Backbone, Associations, Store) {
 			relatedModel: function() {
 				return require('models/beverage').model;
 			}
+		}, {
+			type: Backbone.One,
+			key: 'keg_type',
+			relatedModel: function() {
+				return require('models/keg_type').model;
+			}
 		}],
 
 		defaults: {

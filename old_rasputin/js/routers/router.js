@@ -1,5 +1,5 @@
-define(['jquery', 'underscore', 'backbone', 'views/app-view', 'views/form-view', 'models/beverage'], 
-function($, _, Backbone, AppView, FormView, Beverage) {
+define(['jquery', 'underscore', 'backbone', 'views/app-view', 'views/form-view', 'views/beverages-view', 'views/beverage-styles-view', 'views/beverage-types-view', 'views/keg-types-view', 'views/producers-view', 'views/tap-entries-view', 'models/beverage', 'models/producer', 'models/beverage_style', 'models/beverage_type', 'models/keg_type', 'models/settings', 'models/tap_entry'], 
+function($, _, Backbone, AppView, FormView, BeveragesView, BeverageStylesView, BeverageTypesView, KegTypesView, ProducersView, TapEntriesView, Beverage, Producer, BeverageStyle, BeverageType, KegType, Settings, TapEntry) {
 	// ----------
 	var BrewmasterRouter = Backbone.Router.extend({
 		routes: {
@@ -37,24 +37,6 @@ function($, _, Backbone, AppView, FormView, Beverage) {
 			"settings/edit": "editModelInstance",
 		},
 
-		// _collectionForRouteName: {
-		// 	"beverage"				: App.beverages,
-		// 	"beverages"				: App.beverages,
-		// 	// "beverage-style"	: App.beverageStyles,
-		// 	// "beverage-styles"	: App.beverageStyles,
-		// 	// "beverage-type"		: App.beverageTypes,
-		// 	// "beverage-types"	: App.beverageTypes,
-		// 	// "keg-type"				: App.kegTypes,
-		// 	// "keg-types"				: App.kegTypes,
-		// 	// "producer"				: App.producers,
-		// 	// "producers"				: App.producers,
-		// 	// "tap-entry"				: App.tapEntries,
-		// 	// "tap-entries"			: App.tapEntries,
-		// 	// "settings"				: App.settings
-		// },
-		// TODO: make it so the router does all the muxing, creates the app view
-		// Then passes the subview down to the app view when we have data
-		// The router should probably own the app view
 		initialize: function() {
 			this.appView = new AppView();
 
@@ -64,12 +46,42 @@ function($, _, Backbone, AppView, FormView, Beverage) {
 		_collectionForRouteName: {},
 
 		_initializeCollections: function() {
-			var beverageCollection = new Beverage.collection();
+			var beverageCollection = new Beverage.collection();			
+			beverageCollection.fetch();
 
+			var producerCollection = new Producer.collection();
+			producerCollection.fetch();
+			
+			var beverageStyleCollection = new BeverageStyle.collection();
+			beverageStyleCollection.fetch();
+			
+			var beverageTypeCollection = new BeverageType.collection();
+			beverageTypeCollection.fetch();
+			
+			var kegTypeCollection = new KegType.collection();
+			kegTypeCollection.fetch();
+			
+			var settingsCollection = new Settings.collection();
+			settingsCollection.fetch();
+			
+			var tapEntryCollection = new TapEntry.collection();
+			tapEntryCollection.fetch();
+			
 			this._collectionForRouteName = {
 				'beverage': beverageCollection,
-				'beverages': beverageCollection
-			};
+				'beverages': beverageCollection,
+				'producer': producerCollection,
+				'producers': producerCollection,
+				'beverage-style': beverageStyleCollection,
+				'beverage-styles': beverageStyleCollection,
+				'beverage-type': beverageTypeCollection,
+				'beverage-types': beverageTypeCollection,
+				'keg-type': kegTypeCollection,
+				'keg-types': kegTypeCollection,
+				'settings': settingsCollection,
+				'tap-entry': tapEntryCollection,
+				'tap-entries': tapEntryCollection,
+			};			
 		},
 
 		_getCurrentCollection: function() {
@@ -84,7 +96,6 @@ function($, _, Backbone, AppView, FormView, Beverage) {
 			var model = collection.model;
 			var modelInstance = new model();
 
-			debugger;
 			var options = {
 				'collection': collection,
 				'model': modelInstance,
@@ -106,6 +117,7 @@ function($, _, Backbone, AppView, FormView, Beverage) {
 			};
 			var formView = new FormView(options);
 			this.appView.mainView = formView;
+			this.appView.render();
 		},
 
 		editModelInstance: function(id) {
@@ -119,6 +131,7 @@ function($, _, Backbone, AppView, FormView, Beverage) {
 			};
 			var formView = new FormView(options);
 			this.appView.mainView = formView;
+			this.appView.render();		
 		},
 
 		listCollection: function() {
@@ -129,6 +142,23 @@ function($, _, Backbone, AppView, FormView, Beverage) {
 				'instance': collection,
 				'isEditing': false,
 			};
+			
+			var listView = null;
+			if (collection instanceof Beverage.collection) {
+				listView = new BeveragesView(options);
+			} else if (collection instanceof BeverageType.collection) {
+				listView = new BeverageTypesView(options);
+			} else if (collection instanceof BeverageStyle.collection) {
+				listView = new BeveragesStylesView(options);
+			} else if (collection instanceof KegType.collection) {
+				listView = new KegTypesView(options);
+			} else if (collection instanceof Producer.collection) {
+				listView = new ProducersView(options);
+			} else if (collection instanceof TapEntry.collection) {
+				listView = new TapEntriesView(options);
+			}	
+			this.appView.mainView = listView;
+			this.appView.render();
 		}
 
 	});

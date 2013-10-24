@@ -14,7 +14,9 @@ function($, Backbone, Associations, Store, Image) {
 		relations: [{
 			type: Backbone.Many,
 			key: 'beverages',
-			collectionType: function() { return require('models/beverage').collection;}
+			collectionType: function() { 
+				return require('models/beverage').collection;
+			}
 		}],
 
 		defaults: {

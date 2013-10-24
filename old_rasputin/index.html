@@ -35,6 +35,38 @@
 				<td>{{ibu}}</td>
 		</script>		
 		
+		<script id="beverage-style-row-template" type="text/x-handlebars-template">
+				<td><img height="32" src={{image.dataURL}}></td>
+				<td>{{name}}</td>
+				<td>{{description}}</td>
+		</script>
+		
+		<script id="beverage-type-row-template" type="text/x-handlebars-template">
+				<td><img height="32" src={{image.dataURL}}></td>
+				<td>{{name}}</td>
+		</script>
+		
+		<script id="producer-row-template" type="text/x-handlebars-template">
+				<td><img height="32" src={{image.dataURL}}></td>
+				<td>{{name}}</td>
+				<td>{{location}}</td>
+				<td>{{established}}</td>
+		</script>
+		
+		<script id="keg-type-row-template" type="text/x-handlebars-template">
+				<td><img height="32" src={{image.dataURL}}></td>
+				<td>{{name}}</td>
+				<td>{{capacity}}</td>
+		</script>
+		
+		<script id="tap-entry-row-template" type="text/x-handlebars-template">
+				<td><img height="32" src={{image.dataURL}}></td>
+				<td>{{name}}</td>
+				<td>{{producer.name}}</td>
+				<td>{{abv}}</td>
+				<td>{{ibu}}</td>
+		</script>
+
 		<script id="model-list-template" type="text/x-handlebars-template">
 			<div id="table">
 				<table class="table">
