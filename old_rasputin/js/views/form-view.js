@@ -35,6 +35,7 @@ define([
 			if (this.collection) {
 				this.collection.add(this.model);
 				this.model.save();
+				this.collection.sync();
 				console.log("Model Saved");
 			}
 		},

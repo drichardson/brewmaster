@@ -18,6 +18,9 @@ function($, Backbone, Associations, Store, Image) {
 			key: 'beverages',
 			collectionType: function() {
 				return require('models/beverage').collection;
+			},
+			map:function () {
+				return require('collections').beverage.where({'beverage':this.id});
 			}
 		}],
 

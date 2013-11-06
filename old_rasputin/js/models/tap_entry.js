@@ -18,12 +18,18 @@ function($, Backbone, Associations, Store) {
 			key: 'beverage',
 			relatedModel: function() {
 				return require('models/beverage').model;
+			},
+			map:function (beverage_id) {
+				return require('collections').beverage.get(beverage_id);
 			}
 		}, {
 			type: Backbone.One,
 			key: 'keg_type',
 			relatedModel: function() {
 				return require('models/keg_type').model;
+			},
+			map:function (keg_type_id) {
+				return require('collections').kegType.get(keg_type_id);
 			}
 		}],
 

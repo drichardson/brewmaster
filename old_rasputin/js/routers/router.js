@@ -1,5 +1,5 @@
-define(['jquery', 'underscore', 'backbone', 'views/app-view', 'views/form-view', 'views/beverages-view', 'views/beverage-styles-view', 'views/beverage-types-view', 'views/keg-types-view', 'views/producers-view', 'views/tap-entries-view', 'models/beverage', 'models/producer', 'models/beverage_style', 'models/beverage_type', 'models/keg_type', 'models/settings', 'models/tap_entry'], 
-function($, _, Backbone, AppView, FormView, BeveragesView, BeverageStylesView, BeverageTypesView, KegTypesView, ProducersView, TapEntriesView, Beverage, Producer, BeverageStyle, BeverageType, KegType, Settings, TapEntry) {
+define(['jquery', 'underscore', 'backbone', 'collections', 'views/app-view', 'views/form-view', 'views/beverages-view', 'views/beverage-styles-view', 'views/beverage-types-view', 'views/keg-types-view', 'views/producers-view', 'views/tap-entries-view', 'models/beverage', 'models/producer', 'models/beverage_style', 'models/beverage_type', 'models/keg_type', 'models/settings', 'models/tap_entry'], 
+function($, _, Backbone, Collections, AppView, FormView, BeveragesView, BeverageStylesView, BeverageTypesView, KegTypesView, ProducersView, TapEntriesView, Beverage, Producer, BeverageStyle, BeverageType, KegType, Settings, TapEntry) {
 	// ----------
 	var BrewmasterRouter = Backbone.Router.extend({
 		routes: {
@@ -46,42 +46,24 @@ function($, _, Backbone, AppView, FormView, BeveragesView, BeverageStylesView, B
 		_collectionForRouteName: {},
 
 		_initializeCollections: function() {
-			var beverageCollection = new Beverage.collection();			
-			beverageCollection.fetch();
 
-			var producerCollection = new Producer.collection();
-			producerCollection.fetch();
-			
-			var beverageStyleCollection = new BeverageStyle.collection();
-			beverageStyleCollection.fetch();
-			
-			var beverageTypeCollection = new BeverageType.collection();
-			beverageTypeCollection.fetch();
-			
-			var kegTypeCollection = new KegType.collection();
-			kegTypeCollection.fetch();
-			
-			var settingsCollection = new Settings.collection();
-			settingsCollection.fetch();
-			
-			var tapEntryCollection = new TapEntry.collection();
-			tapEntryCollection.fetch();
+			Collections.fetchAll();
 			
 			this._collectionForRouteName = {
-				'beverage': beverageCollection,
-				'beverages': beverageCollection,
-				'producer': producerCollection,
-				'producers': producerCollection,
-				'beverage-style': beverageStyleCollection,
-				'beverage-styles': beverageStyleCollection,
-				'beverage-type': beverageTypeCollection,
-				'beverage-types': beverageTypeCollection,
-				'keg-type': kegTypeCollection,
-				'keg-types': kegTypeCollection,
-				'settings': settingsCollection,
-				'tap-entry': tapEntryCollection,
-				'tap-entries': tapEntryCollection,
-			};			
+				'beverage': Collections.beverage,
+				'beverages': Collections.beverage,
+				'producer': Collections.producer,
+				'producers': Collections.producer,
+				'beverage-style': Collections.beverageStyle,
+				'beverage-styles': Collections.beverageStyle,
+				'beverage-type': Collections.beverageType,
+				'beverage-types': Collections.beverageType,
+				'keg-type': Collections.kegType,
+				'keg-types': Collections.kegType,
+				'settings': Collections.settings,
+				'tap-entry': Collections.tapEntry,
+				'tap-entries': Collections.tapEntry,
+			};		
 		},
 
 		_getCurrentCollection: function() {

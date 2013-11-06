@@ -30,19 +30,31 @@ function($, Backbone, Associations, Store, BeverageStyle, BeverageType, Producer
 		relations: [{
 			type: Backbone.One,
 			key: 'producer',
-			relatedModel: Producer.model
+			relatedModel: Producer.model,
+			map:function (producer_id) {
+				return require('collections').producer.get(producer_id);
+			}
 		}, {
 			type: Backbone.One,
 			key: 'beverageType',
-			relatedModel: BeverageType.model
+			relatedModel: BeverageType.model,
+			map:function (type_id) {
+				return require('collections').beverageType.get(type_id);
+			}
 		}, {
 			type: Backbone.One,
 			key: 'beverageStyle',
-			relatedModel: BeverageStyle.model
+			relatedModel: BeverageStyle.model,
+			map:function (style_id) {
+				return require('collections').beverageStyle.get(style_id);
+			}
 		}, {
 			type: Backbone.Many,
 			key: 'tapEntries',
-			collectionType: TapEntry.collection
+			collectionType: TapEntry.collection,
+			map:function () {
+				return require('collections').tapEntry.where({'beverage':this.id});
+			}
 		}],
 
 		defaults: {

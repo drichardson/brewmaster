@@ -16,6 +16,9 @@ function($, Backbone, Associations, Store, Image) {
 			key: 'tapEntry',
 			collectionType: function() {
 				return require('models/tap_entry').collection;
+			},
+			map:function () {
+				return require('collections').tapEntry.where({'beverage':this.id});
 			}
 		}],
 
