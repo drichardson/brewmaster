@@ -14,10 +14,10 @@ int main(int argc, char* argv[])
   struct fb_var_screeninfo vinfo;
   struct fb_fix_screeninfo finfo;
   long int screensize = 0;
-  char *fbp = 0;
+  unsigned short *fbp = 0;
 
   // Open the file for reading and writing
-  fbfd = open("/dev/fb0", O_RDWR);
+  fbfd = open("/dev/fb1", O_RDWR);
   if (!fbfd) {
     printf("Error: cannot open framebuffer device.\n");
     return(1);
@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
   // map framebuffer to user memory 
   screensize = finfo.smem_len;
 
-  fbp = (char*)mmap(0, 
+  fbp = (unsigned short*)mmap(0, 
                     screensize, 
                     PROT_READ | PROT_WRITE, 
                     MAP_SHARED, 
@@ -51,9 +51,17 @@ int main(int argc, char* argv[])
   else {
     // draw...
     // just fill upper half of the screen with something
-    memset(fbp, 0xff, screensize/2);
+      int y;
+      int x;
+      for(y = 0; y < vinfo.yres; y++) {
+          for(x = 0; x < vinfo.xres; x++) {
+              fbp[y*vinfo.xres+x] = ((0xff&0x1F) << 11) | ((0xff&0x3F) << 5) | (0xff&0x1F);
+              //fbp[y*vinfo.xres+x] = 0x0000;
+          }
+      }
+    //memset(fbp, 0xaa, screensize/2);
     // and lower half with something else
-    memset(fbp + screensize/2, 0x18, screensize/2);
+    //memset(fbp + screensize/2, 0xff, screensize/2);
   }
 
   // cleanup
