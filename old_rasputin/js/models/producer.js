@@ -1,21 +1,26 @@
-/*global Backbone */
-var app = app || {};
-
-(function () {
+define(['jquery', 'backbone', 'backbone-associations', 'backbone.localStorage', 'views/image'], 
+function($, Backbone, Associations, Store, Image) {
 	'use strict';
 
-	// Producer Model
-	// ----------
-	app.Producer = Backbone.RelationalModel.extend({
-		
+	// --- Model ---
+	var Producer = Associations.AssociatedModel.extend({
+		// For backbone-forms
+		schema: {
+			name:				'Text',
+			image: 			'Image', 
+			location:		'Text',
+			established:'Date'
+		},
+
+		// For backbone-associations
 		relations: [{
-			type: Backbone.HasMany,
+			type: Backbone.Many,
 			key: 'beverages',
-			relatedModel: 'app.Beverage',
-			collectionType: 'app.Beverages',
-			reverseRelation: {
-				key: 'producer',
-				includeInJSON: 'id'
+			collectionType: function() {
+				return require('models/beverage').collection;
+			},
+			map:function () {
+				return require('collections').beverage.where({'beverage':this.id});
 			}
 		}],
 
@@ -24,15 +29,17 @@ var app = app || {};
 			image: '',
 			location: '',
 			established: new Date(0) //1970
-		},
-				
-		initialize: function() {
-			this.schema = {
-				name:				'Text',
-				image: 			'Image', 
-				location:		'Text',
-				established:'Date'
-			}
 		}
 	});
-})();
+
+	// --- Collection ---
+	var Producers = Backbone.Collection.extend({
+		model: Producer,
+		localStorage: new Store('producers-backbone'),
+	});
+
+	return {
+		model: Producer,
+		collection: Producers
+	};
+});

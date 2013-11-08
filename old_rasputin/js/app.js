@@ -1,10 +1,15 @@
-/*global $ */
-/*jshint unused:false */
-var app = app || {};
+define([
+  'jquery', 
+  'underscore', 
+  'backbone',
+  'routers/router'
+], function($, _, Backbone, Router) {
+  var initialize = function() {
+    // Pass in our Router module and call it's initialize function
+    Router.initialize();
+  };
 
-$(function () {
-	'use strict';
-
-	// kick things off by creating the `App`	
-	new app.AppView();
+  return { 
+    initialize: initialize
+  };
 });

@@ -1,35 +1,41 @@
-/*global Backbone */
-var app = app || {};
-
-(function () {
+define(['jquery', 'backbone', 'backbone-associations', 'backbone.localStorage', 'views/image'], 
+function($, Backbone, Associations, Store, Image) {
 	'use strict';
 
-	// Beverage Type Model
-	// ----------
-	app.BeverageType = Backbone.RelationalModel.extend({
-		
+	// --- Model ---
+	var BeverageType = Associations.AssociatedModel.extend({
+		// For backbone-forms
+		schema: {
+			name:		'Text',
+			image: 	'Image'
+		},
+
+		// For backbone-associations
 		relations: [{
-			type: Backbone.HasMany,
+			type: Backbone.Many,
 			key: 'beverages',
-			relatedModel: 'app.Beverage',
-			collectionType: 'app.Beverages',
-			reverseRelation: {
-				key: 'beverage_type',
-				includeInJSON: 'id'
+			collectionType: function() { 
+				return require('models/beverage').collection;
+			},
+			map:function () {
+				return require('collections').beverage.where({'beverage':this.id});
 			}
 		}],
-		
+
 		defaults: {
 			name: '',
-			image: '',
-		},
-				
-		initialize: function() {
-			this.schema = {
-				name:		'Text',
-				image: 	'Image'
-			};
+			image: ''
 		}
-		
 	});
-})();
+
+	// --- Collection ---
+	var BeverageTypes = Backbone.Collection.extend({
+		model: BeverageType,
+		localStorage: new Store('beverage-types-backbone'),
+	});
+
+	return {
+		model: BeverageType,
+		collection: BeverageTypes
+	};
+});

@@ -1,15 +1,23 @@
-var app = app || {};
-
-(function ($) {
+define([
+  'jquery', 
+  'backbone',
+	'handlebars',
+	'models/beverage',
+	'backbone-forms'
+], function($, Backbone, Handlebars, Beverage) {
 	'use strict';
 
 	// Generic Form View
 	// --------------
-	app.FormView = Backbone.View.extend({
+	var formView = Backbone.View.extend({
 		
 		template: Handlebars.compile( $("#model-edit-template").html() ),
 		
-		initialize: function() {
+		initialize: function(options) {
+			options = options || {};
+	    Backbone.View.prototype.initialize.call(this, options);
+	    
+	    _.extend(this, _.pick(options, 'model', 'collection', 'isEditing'));
 			this.formView = new Backbone.Form({ model: this.model });
 		},
 		
@@ -18,12 +26,16 @@ var app = app || {};
 		},
 		
 		saveModel: function() {
+			
+			debugger;
+			
 			this.formView.commit();
 			
 			// Add it to the collection so it knows to use localstorage to save
 			if (this.collection) {
 				this.collection.add(this.model);
 				this.model.save();
+				this.collection.sync();
 				console.log("Model Saved");
 			}
 		},
@@ -40,4 +52,5 @@ var app = app || {};
 		
 	});
 	
-})(jQuery);
+	return formView;
+});

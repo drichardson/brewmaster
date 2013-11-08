@@ -1,36 +1,43 @@
-/*global Backbone */
-var app = app || {};
-
-(function () {
+define(['jquery', 'backbone', 'backbone-associations', 'backbone.localStorage', 'views/image'], 
+function($, Backbone, Associations, Store, Image) {
 	'use strict';
 
-	// Style Model
-	// ----------
-	app.BeverageStyle = Backbone.RelationalModel.extend({
-		
+	// --- Model ---
+	var BeverageStyle = Associations.AssociatedModel.extend({
+		// For backbone-forms
+		schema: {
+			name: 'Text',
+			image: 'Image',
+			description: 'TextArea'
+		},
+
+		// For backbone-associations
 		relations: [{
-			type: Backbone.HasMany,
+			type: Backbone.Many,
 			key: 'beverages',
-			relatedModel: 'app.Beverage',
-			collectionType: 'app.Beverages',
-			reverseRelation: {
-				key: 'beverage_style',
-				includeInJSON: 'id'
+			collectionType: function() {
+				return require('models/beverage').collection;
+			},
+			map:function () {
+				return require('collections').beverage.where({'beverage':this.id});
 			}
 		}],
-		
+
 		defaults: {
 			name: '',
 			image: '',
-			description: ''
-		},
-				
-		initialize: function() {
-			this.schema = {
-				name:				'Text',
-				image: 			'Image',
-				description:'TextArea',
-			};
+			description: '',
 		}
 	});
-})();
+
+	// --- Collection ---
+	var BeverageStyles = Backbone.Collection.extend({
+		model: BeverageStyle,
+		localStorage: new Store('beverage-styles-backbone'),
+	});
+
+	return {
+		model: BeverageStyle,
+		collection: BeverageStyles
+	};
+});

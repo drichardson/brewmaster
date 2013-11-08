@@ -1,131 +1,156 @@
-/*global Backbone */
-var app = app || {};
-
-(function () {
-	// 'use strict';
-
+define(['jquery', 'underscore', 'backbone', 'collections', 'views/app-view', 'views/form-view', 'views/beverages-view', 'views/beverage-styles-view', 'views/beverage-types-view', 'views/keg-types-view', 'views/producers-view', 'views/tap-entries-view', 'models/beverage', 'models/producer', 'models/beverage_style', 'models/beverage_type', 'models/keg_type', 'models/settings', 'models/tap_entry'], 
+function($, _, Backbone, Collections, AppView, FormView, BeveragesView, BeverageStylesView, BeverageTypesView, KegTypesView, ProducersView, TapEntriesView, Beverage, Producer, BeverageStyle, BeverageType, KegType, Settings, TapEntry) {
 	// ----------
 	var BrewmasterRouter = Backbone.Router.extend({
 		routes: {
-			"beverage/new"						: "newModelInstance",
-			"beverage/:id/edit"				: "editModelInstance",
-			"beverage/:id"						: "getModelInstance",
-			"beverages"								: "listCollection",
-			
-			"beverage-style/new"			: "newModelInstance",
-			"beverage-style/:id/edit" : "editModelInstance",
-			"beverage-style/:id"			: "getModelInstance",
-			"beverage-styles"					: "listCollection",
-			
-			"beverage-type/new"				: "newModelInstance",
-			"beverage-type/:id/edit"	: "editModelInstance",
-			"beverage-type/:id"	      : "getModelInstance",
-			"beverage-types"          : "listCollection",
-			
-			"keg-type/new"						: "newModelInstance",
-			"keg-type/:id/edit"				: "editModelInstance",
-			"keg-type/:id"	          : "getModelInstance",
-			"keg-types"               : "listCollection",
+			"beverage/new": "newModelInstance",
+			"beverage/:id/edit": "editModelInstance",
+			"beverage/:id": "getModelInstance",
+			"beverages": "listCollection",
 
-			"producer/new"						: "newModelInstance",
-			"producer/:id/edit"				: "editModelInstance",
-			"producer/:id"						: "getModelInstance",
-			"producers"     					: "listCollection",
-			
-			"tap-entry/new"						: "newModelInstance",
-			"tap-entry/:id/edit"			: "editModelInstance",
-			"tap-entry/:id"						: "getModelInstance",
-			"tap-entries"							: "listCollection",
-			
-			"settings"								: "getModelInstance",
-			"settings/edit"						: "editModelInstance",
+			"beverage-style/new": "newModelInstance",
+			"beverage-style/:id/edit": "editModelInstance",
+			"beverage-style/:id": "getModelInstance",
+			"beverage-styles": "listCollection",
+
+			"beverage-type/new": "newModelInstance",
+			"beverage-type/:id/edit": "editModelInstance",
+			"beverage-type/:id": "getModelInstance",
+			"beverage-types": "listCollection",
+
+			"keg-type/new": "newModelInstance",
+			"keg-type/:id/edit": "editModelInstance",
+			"keg-type/:id": "getModelInstance",
+			"keg-types": "listCollection",
+
+			"producer/new": "newModelInstance",
+			"producer/:id/edit": "editModelInstance",
+			"producer/:id": "getModelInstance",
+			"producers": "listCollection",
+
+			"tap-entry/new": "newModelInstance",
+			"tap-entry/:id/edit": "editModelInstance",
+			"tap-entry/:id": "getModelInstance",
+			"tap-entries": "listCollection",
+
+			"settings": "getModelInstance",
+			"settings/edit": "editModelInstance",
 		},
-		
-		_collectionForRouteName: {
-			"beverage"				: app.beverages,
-			"beverages"				: app.beverages,
-			"beverage-style"	: app.beverageStyles,
-			"beverage-styles"	: app.beverageStyles,
-			"beverage-type"		: app.beverageTypes,
-			"beverage-types"	: app.beverageTypes,
-			"keg-type"				: app.kegTypes,
-			"keg-types"				: app.kegTypes,
-			"producer"				: app.producers,
-			"producers"				: app.producers,
-			"tap-entry"				: app.tapEntries,
-			"tap-entries"			: app.tapEntries,
-			"settings"				: app.settings
-		},
-		
+
 		initialize: function() {
-			app.currentState = {};
-			
-			// TODO: Hack.  These should probably be lazily loaded
-			for ( key in this._collectionForRouteName ) {
-				this._collectionForRouteName[key].fetch();
-			}
-			
+			this.appView = new AppView();
+
+			this._initializeCollections();
 		},
-		
-		// *** Relational handlers ***
-		newModelInstance: function() {
-			var base = Backbone.history.fragment.split('/')[0];
-			var collection = this._collectionForRouteName[base];
-			var model = collection.model;
-			var modelInstance = new model();	
+
+		_collectionForRouteName: {},
+
+		_initializeCollections: function() {
+
+			Collections.fetchAll();
 			
-			app.currentState = {
-				'collection' 		: collection,
-				'instance'			: modelInstance,
-				'modelName'			: base,
-				'isEditing'			: true,
-				'isCollection'	: false
-			};
-		},
-		
-		getModelInstance: function(id) {
-			var base = Backbone.history.fragment.split('/')[0];
-			var collection = this._collectionForRouteName[base];
-			var modelInstance = collection.get(id);
-			
-			app.currentState = {
-				'collection' 		: collection,
-				'instance'			: modelInstance,
-				'modelName'			: base,
-				'isEditing'			: false,
-				'isCollection'	: false
+			this._collectionForRouteName = {
+				'beverage': Collections.beverage,
+				'beverages': Collections.beverage,
+				'producer': Collections.producer,
+				'producers': Collections.producer,
+				'beverage-style': Collections.beverageStyle,
+				'beverage-styles': Collections.beverageStyle,
+				'beverage-type': Collections.beverageType,
+				'beverage-types': Collections.beverageType,
+				'keg-type': Collections.kegType,
+				'keg-types': Collections.kegType,
+				'settings': Collections.settings,
+				'tap-entry': Collections.tapEntry,
+				'tap-entries': Collections.tapEntry,
 			};		
 		},
-		
-		editModelInstance: function(id) {
+
+		_getCurrentCollection: function() {
 			var base = Backbone.history.fragment.split('/')[0];
 			var collection = this._collectionForRouteName[base];
-			var modelInstance = collection.get(id);
-			
-			app.currentState = {
-				'collection' 		: collection,
-				'instance'			: modelInstance,
-				'modelName'			: base,
-				'isEditing'			: true,
-				'isCollection'	: false
-			};
+			return collection;
 		},
-		
-		listCollection: function() {
-			var base = Backbone.history.fragment.split('/')[0];
-			var collection = this._collectionForRouteName[base];
-			
-			app.currentState = {
-				'collection' 		: collection,
-				'instance'			: collection,
-				'modelName'			: base,
-				'isEditing'			: false,
-				'isCollection'	: true
+
+		// *** Relational handlers ***
+		newModelInstance: function() {
+			var collection = this._getCurrentCollection();
+			var model = collection.model;
+			var modelInstance = new model();
+
+			var options = {
+				'collection': collection,
+				'model': modelInstance,
+				'isEditing': true,
 			};
+			var formView = new FormView(options);
+			this.appView.mainView = formView;
+			this.appView.render();
+		},
+
+		getModelInstance: function(id) {
+			var collection = this._getCurrentCollection();
+			var modelInstance = collection.get(id);
+
+			var options = {
+				'collection': collection,
+				'model': modelInstance,
+				'isEditing': false,
+			};
+			var formView = new FormView(options);
+			this.appView.mainView = formView;
+			this.appView.render();
+		},
+
+		editModelInstance: function(id) {
+			var collection = this._getCurrentCollection();
+			var modelInstance = collection.get(id);
+
+			var options = {
+				'collection': collection,
+				'model': modelInstance,
+				'isEditing': true,
+			};
+			var formView = new FormView(options);
+			this.appView.mainView = formView;
+			this.appView.render();		
+		},
+
+		listCollection: function() {
+			var collection = this._getCurrentCollection();
+
+			var options = {
+				'collection': collection,
+				'instance': collection,
+				'isEditing': false,
+			};
+			
+			var listView = null;
+			if (collection instanceof Beverage.collection) {
+				listView = new BeveragesView(options);
+			} else if (collection instanceof BeverageType.collection) {
+				listView = new BeverageTypesView(options);
+			} else if (collection instanceof BeverageStyle.collection) {
+				listView = new BeveragesStylesView(options);
+			} else if (collection instanceof KegType.collection) {
+				listView = new KegTypesView(options);
+			} else if (collection instanceof Producer.collection) {
+				listView = new ProducersView(options);
+			} else if (collection instanceof TapEntry.collection) {
+				listView = new TapEntriesView(options);
+			}	
+			this.appView.mainView = listView;
+			this.appView.render();
 		}
 
 	});
 
-	app.BrewmasterRouter = new BrewmasterRouter();
-	Backbone.history.start();
-})();
+	var initialize = function() {
+			var router = new BrewmasterRouter();
+			Backbone.history.start();
+		};
+
+	return {
+		initialize: initialize
+	};
+});

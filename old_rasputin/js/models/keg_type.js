@@ -1,37 +1,42 @@
-/*global Backbone */
-var app = app || {};
-
-(function () {
+define(['jquery', 'backbone', 'backbone-associations', 'backbone.localStorage', 'views/image'], 
+function($, Backbone, Associations, Store, Image) {
 	'use strict';
 
-	// Keg Type Model
-	// ----------
-	app.KegType = Backbone.RelationalModel.extend({
+	// --- Model ---
+	var KegType = Associations.AssociatedModel.extend({
+		// For backbone-forms
+		schema: {
+			name: 'Text',
+			image: 'Image',
+			capacity: 'Number'
+		},
 		
 		relations: [{
-			type: Backbone.HasMany,
-			key: 'tap_entry',
-			relatedModel: 'app.TapEntry',
-			collectionType: 'app.TapEntries',
-			reverseRelation: {
-				key: 'keg_type',
-				includeInJSON: 'id'
+			type: Backbone.Many,
+			key: 'tapEntry',
+			collectionType: function() {
+				return require('models/tap_entry').collection;
+			},
+			map:function () {
+				return require('collections').tapEntry.where({'beverage':this.id});
 			}
 		}],
-		
+
 		defaults: {
 			name: '',
 			image: '',
 			capacity: 0
-		},
-				
-		initialize: function() {
-			this.schema = {
-				name:				'Text',
-				image: 			'Image', 
-				capacity:		'Number'
-			}
 		}
-		
 	});
-})();
+
+	// --- Collection ---
+	var KegTypes = Backbone.Collection.extend({
+		model: KegType,
+		localStorage: new Store('keg-types-backbone'),
+	});
+
+	return {
+		model: KegType,
+		collection: KegTypes
+	};
+});

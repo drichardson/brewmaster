@@ -1,3 +1,10 @@
+define([
+  'jquery',
+	'underscore',
+  'backbone',
+	'handlebars',
+	'backbone-forms'
+], function($, _, Backbone, Handlebars) {
 
 Backbone.Form.editors.Image = Backbone.Form.editors.Base.extend({
 
@@ -41,7 +48,7 @@ Backbone.Form.editors.Image = Backbone.Form.editors.Base.extend({
 
     render: function() {
 	    	Backbone.Form.editors.Base.prototype.render.apply(this, arguments);
-  
+ 
 				this.$el.html(this.template(this.model.toJSON()));
         return this;
     },
@@ -78,7 +85,7 @@ Backbone.Form.editors.Image = Backbone.Form.editors.Base.extend({
 		updateImage: function(e) {
 			this.readFile(e.target.files[0]);
 		},
-		
+	
 		readFile: function(file) {
 		    var reader = new FileReader();
 		    // closure to capture the file information.
@@ -91,5 +98,6 @@ Backbone.Form.editors.Image = Backbone.Form.editors.Base.extend({
 		    // Read in the image file as a data URL.
 		    reader.readAsDataURL(file);
 		}
+	});
 		
 });
