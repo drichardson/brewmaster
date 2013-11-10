@@ -1,4 +1,4 @@
-TARGETS=openvc opengl_raspi gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw parse_json url_request opengl_simple opengl_from_scratch Hello_Triangle egl
+TARGETS=openvc opengl_raspi gcd framebuffer_info framebuffer_draw cairo_framebuffer_draw parse_json url_request opengl_simple Hello_Triangle egl
 CFLAGS=-g -O0 -Wall -Werror
 
 all: $(TARGETS)
@@ -33,9 +33,6 @@ BC_LDFLAGS+=-L/opt/vc/lib/ -lGLESv2 -lEGL -lopenmaxil -lbcm_host -lvcos -lvchiq_
 BC_INCLUDES+=-I/opt/vc/include/ -I/opt/vc/include/interface/vcos/pthreads -I/opt/vc/include/interface/vmcs_host/linux
 
 opengl_simple: opengl_simple.c
-	$(CC) $(BC_INCLUDES) $< $(CFLAGS) -o $@ $(BC_LDFLAGS)
-
-opengl_from_scratch: opengl_from_scratch.c
 	$(CC) $(BC_INCLUDES) $< $(CFLAGS) -o $@ $(BC_LDFLAGS)
 
 egl: egl.c
