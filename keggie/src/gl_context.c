@@ -117,6 +117,12 @@ bool gl_context_initialize(gl_context_t* ctx) {
     // ctx should be completely initialized at this point.
     gl_context_reset_state(ctx);
 
+    GLenum fbStatus = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+    if (fbStatus != GL_FRAMEBUFFER_COMPLETE) {
+        log_error("Framebuffer status not complete: %x", fbStatus);
+        return false;
+    }
+
     return true;
 }
 
