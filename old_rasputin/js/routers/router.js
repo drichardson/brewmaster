@@ -1,8 +1,11 @@
-define(['jquery', 'underscore', 'backbone', 'collections', 'views/app-view', 'views/form-view', 'views/beverages-view', 'views/beverage-styles-view', 'views/beverage-types-view', 'views/keg-types-view', 'views/producers-view', 'views/tap-entries-view', 'models/beverage', 'models/producer', 'models/beverage_style', 'models/beverage_type', 'models/keg_type', 'models/settings', 'models/tap_entry'], 
-function($, _, Backbone, Collections, AppView, FormView, BeveragesView, BeverageStylesView, BeverageTypesView, KegTypesView, ProducersView, TapEntriesView, Beverage, Producer, BeverageStyle, BeverageType, KegType, Settings, TapEntry) {
+define(['jquery', 'underscore', 'backbone', 'collections', 'views/app-view', 'views/main-view', 'views/form-view', 'views/beverages-view', 'views/beverage-styles-view', 'views/beverage-types-view', 'views/keg-types-view', 'views/producers-view', 'views/tap-entries-view', 'models/beverage', 'models/producer', 'models/beverage_style', 'models/beverage_type', 'models/keg_type', 'models/settings', 'models/tap_entry'], 
+function($, _, Backbone, Collections, AppView, MainView, FormView, BeveragesView, BeverageStylesView, BeverageTypesView, KegTypesView, ProducersView, TapEntriesView, Beverage, Producer, BeverageStyle, BeverageType, KegType, Settings, TapEntry) {
 	// ----------
 	var BrewmasterRouter = Backbone.Router.extend({
 		routes: {
+			
+			"": "index",
+			
 			"beverage/new": "newModelInstance",
 			"beverage/:id/edit": "editModelInstance",
 			"beverage/:id": "getModelInstance",
@@ -71,6 +74,12 @@ function($, _, Backbone, Collections, AppView, FormView, BeveragesView, Beverage
 			var collection = this._collectionForRouteName[base];
 			return collection;
 		},
+		
+		// *** Handlers ***
+		index: function() {
+			this.appView.contentView = null;
+			this.appView.render();
+		},
 
 		// *** Relational handlers ***
 		newModelInstance: function() {
@@ -84,7 +93,7 @@ function($, _, Backbone, Collections, AppView, FormView, BeveragesView, Beverage
 				'isEditing': true,
 			};
 			var formView = new FormView(options);
-			this.appView.mainView = formView;
+			this.appView.contentView = formView;
 			this.appView.render();
 		},
 
@@ -98,7 +107,7 @@ function($, _, Backbone, Collections, AppView, FormView, BeveragesView, Beverage
 				'isEditing': false,
 			};
 			var formView = new FormView(options);
-			this.appView.mainView = formView;
+			this.appView.contentView = formView;
 			this.appView.render();
 		},
 
@@ -112,7 +121,7 @@ function($, _, Backbone, Collections, AppView, FormView, BeveragesView, Beverage
 				'isEditing': true,
 			};
 			var formView = new FormView(options);
-			this.appView.mainView = formView;
+			this.appView.contentView = formView;
 			this.appView.render();		
 		},
 
@@ -131,7 +140,7 @@ function($, _, Backbone, Collections, AppView, FormView, BeveragesView, Beverage
 			} else if (collection instanceof BeverageType.collection) {
 				listView = new BeverageTypesView(options);
 			} else if (collection instanceof BeverageStyle.collection) {
-				listView = new BeveragesStylesView(options);
+				listView = new BeverageStylesView(options);
 			} else if (collection instanceof KegType.collection) {
 				listView = new KegTypesView(options);
 			} else if (collection instanceof Producer.collection) {
@@ -139,7 +148,7 @@ function($, _, Backbone, Collections, AppView, FormView, BeveragesView, Beverage
 			} else if (collection instanceof TapEntry.collection) {
 				listView = new TapEntriesView(options);
 			}	
-			this.appView.mainView = listView;
+			this.appView.contentView = listView;
 			this.appView.render();
 		}
 

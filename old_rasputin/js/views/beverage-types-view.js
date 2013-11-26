@@ -14,6 +14,10 @@ define([
 
 	var beverageTypesView = List.ListView.extend({
 		
+		title: "Beverage Types",
+		
+		newItemRoute: '#beverage-type/new',
+		
 		fields: ['Image', 'Name'],
 		
 		itemView: beverageTypesItemView

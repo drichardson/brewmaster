@@ -8,6 +8,7 @@ function($, Backbone, Associations, Store) {
 		schema: {
 			name: 'Text',
 			active: 'Checkbox',
+			number: 'Number'
 			date_added: 'Date',
 			date_removed: 'Date'
 		},
@@ -45,7 +46,12 @@ function($, Backbone, Associations, Store) {
 	// --- Collection ---
 	var TapEntries = Backbone.Collection.extend({
 		model: TapEntry,
+		
 		localStorage: new Store('tap-entries-backbone'),
+		
+		activeTaps: function() {
+			return this.where({active: true});
+		}
 	});
 
 	return {

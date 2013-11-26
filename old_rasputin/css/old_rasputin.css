@@ -3,3 +3,17 @@
     width: 100%;
     height: auto;
 }
+
+.content-container {
+	padding-left: 15px;
+	padding-right: 15px;
+	padding-bottom: 15px;
+}
+
+.float-left {
+	float: left;
+}
+
+.float-right {
+	float: right;
+}

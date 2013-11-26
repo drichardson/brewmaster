@@ -6,20 +6,56 @@
 		<title>Backbone.js Brewmaster</title>
 
 		<!-- <link href="vendor/distribution/templates/bootstrap.css" rel="stylesheet"> -->
-		<!-- <link href="vendor/bootstrap/css/bootstrap.css" rel="stylesheet"> -->
+		<link href="vendor/bootstrap-3.0/css/bootstrap.css" rel="stylesheet">
 		<link href="css/old_rasputin.css" rel="stylesheet">
 	</head>
 	<body>
 		<section id="brewmasterapp">
-			<header>
-				<h1>Brewmaster</h1>
-			<header>
-			<section id="main">
-				<ul id="beverage-list"></ul>
-			</section>
-			<section id="edit-beverage">
-			</section>
+			<div id="main">
+			</div>
 		</section>
+		
+		<script id ='main-view-template' type="text/x-handlebars-template">
+			<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
+			  <div class="navbar-header">
+			    <a class="navbar-brand" href="#">Brewmaster</a>
+			  </div>
+				<div class="navbar-collapse collapse">
+					<ul class="nav navbar-nav">
+						<li class="active"><a href="#">Home</a></li>
+						<li><a href="#statistics">Statistics</a></li>
+						<li class="dropdown">
+							<a href="#" class="dropdown-toggle" data-toggle="dropdown">Advanced<b class="caret"></b></a>
+							<ul class="dropdown-menu">
+								<li><a href="#beverages">Beverages</a></li>
+								<li><a href="#beverage-types">Beverage Types</a></li>
+								<li><a href="#beverage-styles">Beverage Styles</a></li>
+								<li><a href="#producers">Breweries</a></li>
+								<li><a href="#keg-types">Keg Types</a></li>
+								<li><a href="#tap-entries">Tap Log</a></li>
+							</ul>
+						</li>
+					</ul>
+					<ul class="nav navbar-nav navbar-right">
+						<li><a href="#settings">Settings</a></li>
+					</ul>
+				</div>
+			</nav>
+			<div id="content" class="content-container">
+			</div>
+		</script>
+		
+		<script id="tap-entry-template" type="text/x-handlebars-template">
+		    <div class="thumbnail">
+		    	<h3>Tap {{number}}</h3>
+		      <img src={{image.dataURL}} alt="...">
+		      <div class="caption">
+		        <h3>Thumbnail label</h3>
+		        <p>...</p>
+		        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+		      </div>
+		    </div>
+		</script>
 		
 		<script id="model-edit-template" type="text/x-handlebars-template">
 			<div id="form-container">
@@ -68,11 +104,15 @@
 		</script>
 
 		<script id="model-list-template" type="text/x-handlebars-template">
+			<div id="table-title">
+				<h4 class='float-left'>{{title}}</h4>
+				<a class='float-right btn btn-default ' role='button' href={{newItemRoute}}>Add New</a>
+			</div>
 			<div id="table">
 				<table class="table">
 					<thead>
 					  <tr>
-						{{#each this}}
+						{{#each fields}}
 							<th>{{this}}</th>
 						{{/each}}
 					  </tr>

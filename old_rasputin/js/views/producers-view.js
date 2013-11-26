@@ -14,6 +14,10 @@ define([
 
 	var producersView = List.ListView.extend({
 		
+		title: "Producers",
+		
+		newItemRoute: '#producer/new',
+		
 		fields: ['Image', 'Name', 'Location', 'Established'],
 		
 		itemView: producersItemView

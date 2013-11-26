@@ -14,6 +14,10 @@ define([
 
 	var tapEntriesView = List.ListView.extend({
 		
+		title: "Tap Log",
+		
+		newItemRoute: '#tap-entry/new',
+		
 		fields: ['Image', 'Name', 'Brewery', 'ABV', 'IBU'],
 		
 		itemView: tapEntriesItemView

@@ -45,11 +45,15 @@ function($, Backbone, Handlebars) {
 
 		template: Handlebars.compile($("#model-list-template").html()),
 
+		title: "",
+
 		fields: [],
 
 		itemView: listItemView,
 
 		_itemViews: {},
+		
+		newItemRoute: '',
 
 		renderItemViews: function() {
 			var els = _.map(this._itemViews, function(view) {
@@ -65,14 +69,18 @@ function($, Backbone, Handlebars) {
 			this._itemViews[model.cid] = view;
 			view.render();
 		},
-
+		
 		removeOne: function(model) {
 			this._itemViews[model.cid].remove();
 			delete this._itemViews[model.cid];
 		},
 
 		render: function() {
-			this.$el.html(this.template(this.fields));
+			this.$el.html(this.template({
+				fields: this.fields, 
+				title: this.title,
+				newItemRoute: this.newItemRoute
+				}));
 			this.$("#table-body").html(this.renderItemViews());
 
 			return this;

@@ -1,7 +1,8 @@
 define([
   'jquery', 
   'backbone',
-], function($, Backbone) {
+	'views/main-view'
+], function($, Backbone, MainView) {
 	'use strict';
 
 	// The Application
@@ -18,26 +19,24 @@ define([
 		// collection, when items are added or changed. Kick things off by
 		// loading any preexisting todos that might be saved in *localStorage*.
 		initialize: function () {
-			this.mainView = null;
-			this.on('change:mainView', function() {
+			this.contentView = null;
+			this.on('change:contentView', function() {
 				this.render();
 			});
 		},		
 		render: function() {			
 			// Render our subview
-			var mainView = this.mainView;
+			var mainView = new MainView();
 			if (mainView) {
 				$('#main').html(mainView.render().el);
 			}
+			var contentView = this.contentView;
+			if (contentView) {
+				$('#content').html(contentView.render().el);
+			}
+			
 			return this;
-		},
-
-		// Add a single beverage item to the list by creating a view for it, and
-		// appending its element to the `<ul>`.
-		// addOne: function (beverage) {
-		// 	var view = new app.BeverageItemView({ model: beverage });
-		// 	$('#beverage-list').append(view.render().el);
-		// }
+		}
 	});
 	
 	return appView;

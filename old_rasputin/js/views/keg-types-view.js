@@ -14,6 +14,10 @@ define([
 
 	var kegTypesView = List.ListView.extend({
 		
+		title: "Keg Types",
+		
+		newItemRoute: '#keg-type/new',
+		
 		fields: ['Image', 'Name', 'Capacity'],
 		
 		itemView: kegTypesItemView
