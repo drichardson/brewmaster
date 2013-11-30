@@ -14,6 +14,7 @@
 			<div id="main">
 			</div>
 		</section>
+		<script src="vendor/holder/holder.js"></script>	
 		
 		<script id ='main-view-template' type="text/x-handlebars-template">
 			<nav class="navbar navbar-inverse navbar-static-top" role="navigation">
@@ -44,17 +45,92 @@
 			<div id="content" class="content-container">
 			</div>
 		</script>
+
+		<script id="home-screen-view-template" type="text/x-handlebars-template">
+			<div id="tap-entry-grid" class="tap-entry-grid">
+				<div id="tap-entry-grid-row" class="row">
+				</div>
+			</div>
+		</script>
 		
 		<script id="tap-entry-template" type="text/x-handlebars-template">
+			<div id="tap-entry-grid-item" class="tap-entry-grid-item">
 		    <div class="thumbnail">
-		    	<h3>Tap {{number}}</h3>
-		      <img src={{image.dataURL}} alt="...">
+		      <img data-src={{beverage.image.dataURL}} alt="..." class="tap-entry-image">
 		      <div class="caption">
-		        <h3>Thumbnail label</h3>
-		        <p>...</p>
-		        <p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>
+		      	<h3>{{name}}</h3>
+						{{#if beverage}}
+		        <p>{{beverage.name}} - {{beverage.producer.name}}</p>
+						{{else}}
+						<p>Not in use</p>
+						{{/if}}
+						<p>
+							<a href="#tap-entry/{{id}}/edit" class="btn btn-primary" role="button">Edit</a>
+							<a href="#" class="btn btn-default" role="button">Clear</a>
+						</p>
 		      </div>
 		    </div>
+			</div>
+		</script>
+		
+		<script id="edit-tap-entry-template" type="text/x-handlebars-template">
+			<h3>{{name}}</h3>
+			<div>
+				<label for="tap-entry-selected-beverage">Selected Beverage</label>
+				<div>
+					{{#if beverage}}
+					<a id="tap-entry-selected-beverage" href="#beverage/{{beverage}}">{{beverage.name}} - {{producer.name}}</a>
+					{{else}}
+					<a id="tap-entry-selected-beverage" href="#beverage/{{beverage}}">90 Minute IPA - Dogfish Head</a>
+					{{/if}}
+					<span class="glyphicon glyphicon-remove-sign inline-icon" role="button"></span>
+				</div>
+			</div>
+			<div class="section-offset">
+				<label for="tap-entry-beverage-search">Change Selection</label>
+				<div>
+					<input id="tap-entry-beverage-search" type="text" placeholder="Search Catalog"/>
+					<span class="padded-text example-text-color">or</span>
+					<a class="padded-text" id="tap-entry-beverage-add-new" href="#beverage/new">
+						<span>Add New</span>
+						<span class="glyphicon glyphicon-plus-sign inline-icon"></span>
+					</a>
+				</div>
+			</div>
+			<div>
+				<div id="tap-entry-beverage-search-table" class="bordered-section-container section-small-offset">
+				</div>
+			</div>
+		</script>
+
+		<script id="beverage-builder-template" type="text/x-handlebars-template">
+			<h3>{{name}}</h3>
+			<div>
+				<label for="tap-entry-selected-beverage">Selected Beverage</label>
+				<div>
+					{{#if beverage}}
+					<a id="tap-entry-selected-beverage" href="#beverage/{{beverage}}">{{beverage.name}} - {{producer.name}}</a>
+					{{else}}
+					<a id="tap-entry-selected-beverage" href="#beverage/{{beverage}}">90 Minute IPA - Dogfish Head</a>
+					{{/if}}
+					<span class="glyphicon glyphicon-remove-sign inline-icon" role="button"></span>
+				</div>
+			</div>
+			<div class="section-offset">
+				<label for="tap-entry-beverage-search">Change Selection</label>
+				<div>
+					<input id="tap-entry-beverage-search" type="text" placeholder="Search Catalog"/>
+					<span class="padded-text example-text-color">or</span>
+					<a class="padded-text" id="tap-entry-beverage-add-new" href="#beverage/new">
+						<span>Add New</span>
+						<span class="glyphicon glyphicon-plus-sign inline-icon"></span>
+					</a>
+				</div>
+			</div>
+			<div>
+				<div id="tap-entry-beverage-search-table" class="bordered-section-container section-small-offset">
+				</div>
+			</div>
 		</script>
 		
 		<script id="model-edit-template" type="text/x-handlebars-template">
@@ -104,11 +180,13 @@
 		</script>
 
 		<script id="model-list-template" type="text/x-handlebars-template">
+			{{#if title}}
 			<div id="table-title">
 				<h4 class='float-left'>{{title}}</h4>
 				<a class='float-right btn btn-default ' role='button' href={{newItemRoute}}>Add New</a>
 			</div>
-			<div id="table">
+			{{/if}}
+			<div id="table" class="table-responsive">
 				<table class="table">
 					<thead>
 					  <tr>
@@ -133,6 +211,6 @@
 		</script>
 		
 
-		<script data-main="js/main" src="vendor/require-2.1.8/require.com.js"></script>		
+		<script data-main="js/main" src="vendor/require-2.1.8/require.com.js"></script>
 	</body>
 </html>

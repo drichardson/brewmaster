@@ -5,9 +5,12 @@
 }
 
 .content-container {
-	padding-left: 15px;
-	padding-right: 15px;
+	padding-left: 25px;
+	padding-right: 25px;
 	padding-bottom: 15px;
+	max-width: 1000px;
+	margin-left: auto;
+	margin-right: auto;
 }
 
 .float-left {
@@ -17,3 +20,48 @@
 .float-right {
 	float: right;
 }
+
+.tap-entry-grid-item {
+	padding-bottom: 20px;
+	max-width: 250px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.tap-entry-image {
+	padding-top: 10px;
+	min-height: 128px;
+	min-width: 128px;
+}
+
+.inline-icon {
+	vertical-align: text-top;
+	color: #d3d3d3;
+}
+
+.section-offset {
+	margin-top: 20px;
+}
+
+.section-small-offset {
+	margin-top: 10px;
+}
+
+.example-text-color {
+	color: #595959
+}
+
+.padded-text {
+	padding-left: 6px;
+}
+
+.bordered-section-container {
+	border-width: 1px;
+	border-color: #d3d3d3;
+	border-style: solid;
+	min-height: 150px;
+}
+
+/*.tap-entry-button {
+	float: right;
+}*/

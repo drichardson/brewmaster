@@ -1,5 +1,5 @@
-define(['jquery', 'backbone', 'backbone-associations', 'backbone.localStorage'], 
-function($, Backbone, Associations, Store) {
+define(['jquery', 'backbone', 'backbone-associations', 'backbone.localStorage', 'collections'], 
+function($, Backbone, Associations, Store, Collections) {
 	'use strict';
 
 	// --- Model ---
@@ -8,7 +8,7 @@ function($, Backbone, Associations, Store) {
 		schema: {
 			name: 'Text',
 			active: 'Checkbox',
-			number: 'Number'
+			number: 'Number',
 			date_added: 'Date',
 			date_removed: 'Date'
 		},
@@ -49,8 +49,20 @@ function($, Backbone, Associations, Store) {
 		
 		localStorage: new Store('tap-entries-backbone'),
 		
+		// Get an array of active taps (ahh side effects!)
 		activeTaps: function() {
-			return this.where({active: true});
+			//var settings = Collections.settings.first();
+			var tapCount = 4;//settings.tapCount;
+			var activeAndEmptyTaps = new Array(tapCount);
+			for (var i = 0; i < tapCount; i++) {
+				var activeTap = this.findWhere({active: true, number: i});
+				if (!activeTap) {
+					var nameStr = "Tap ".concat(i.toString());
+					activeTap = this.create({active: true, number: i, name: nameStr});
+				}
+				activeAndEmptyTaps[i] = activeTap;				
+			}
+			return activeAndEmptyTaps;
 		}
 	});
 

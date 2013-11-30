@@ -1,5 +1,5 @@
-define(['jquery', 'underscore', 'backbone', 'collections', 'views/app-view', 'views/main-view', 'views/form-view', 'views/beverages-view', 'views/beverage-styles-view', 'views/beverage-types-view', 'views/keg-types-view', 'views/producers-view', 'views/tap-entries-view', 'models/beverage', 'models/producer', 'models/beverage_style', 'models/beverage_type', 'models/keg_type', 'models/settings', 'models/tap_entry'], 
-function($, _, Backbone, Collections, AppView, MainView, FormView, BeveragesView, BeverageStylesView, BeverageTypesView, KegTypesView, ProducersView, TapEntriesView, Beverage, Producer, BeverageStyle, BeverageType, KegType, Settings, TapEntry) {
+define(['jquery', 'underscore', 'backbone', 'collections', 'views/app-view', 'views/main-view', 'views/home-screen-view', 'views/edit-tap-entry-view', 'views/beverage-builder-view', 'views/form-view', 'views/beverages-view', 'views/beverage-styles-view', 'views/beverage-types-view', 'views/keg-types-view', 'views/producers-view', 'views/tap-entries-view', 'views/tap-view', 'models/beverage', 'models/producer', 'models/beverage_style', 'models/beverage_type', 'models/keg_type', 'models/settings', 'models/tap_entry'], 
+function($, _, Backbone, Collections, AppView, MainView, HomeScreenView, EditTapEntryView, BeverageBuilderView, FormView, BeveragesView, BeverageStylesView, BeverageTypesView, KegTypesView, ProducersView, TapEntriesView, TapView, Beverage, Producer, BeverageStyle, BeverageType, KegType, Settings, TapEntry) {
 	// ----------
 	var BrewmasterRouter = Backbone.Router.extend({
 		routes: {
@@ -7,37 +7,36 @@ function($, _, Backbone, Collections, AppView, MainView, FormView, BeveragesView
 			"": "index",
 			
 			"beverage/new": "newModelInstance",
-			"beverage/:id/edit": "editModelInstance",
 			"beverage/:id": "getModelInstance",
 			"beverages": "listCollection",
 
 			"beverage-style/new": "newModelInstance",
-			"beverage-style/:id/edit": "editModelInstance",
 			"beverage-style/:id": "getModelInstance",
 			"beverage-styles": "listCollection",
 
 			"beverage-type/new": "newModelInstance",
-			"beverage-type/:id/edit": "editModelInstance",
 			"beverage-type/:id": "getModelInstance",
 			"beverage-types": "listCollection",
 
 			"keg-type/new": "newModelInstance",
-			"keg-type/:id/edit": "editModelInstance",
 			"keg-type/:id": "getModelInstance",
 			"keg-types": "listCollection",
 
 			"producer/new": "newModelInstance",
-			"producer/:id/edit": "editModelInstance",
 			"producer/:id": "getModelInstance",
 			"producers": "listCollection",
 
 			"tap-entry/new": "newModelInstance",
-			"tap-entry/:id/edit": "editModelInstance",
+			"tap-entry/:id/edit": "editTapEntry",
 			"tap-entry/:id": "getModelInstance",
 			"tap-entries": "listCollection",
+			
+			// beverage builder
+			"tap-entry/:id/edit/beverage": "editTapEntryBeverage", // include type on here
+			"tap-entry/:id/edit/producer": "editTapEntryProducer",
+			"tap-entry/:id/edit/beverageStyle": "editTapEntryBeverageStyle",			
 
 			"settings": "getModelInstance",
-			"settings/edit": "editModelInstance",
 		},
 
 		initialize: function() {
@@ -77,7 +76,9 @@ function($, _, Backbone, Collections, AppView, MainView, FormView, BeveragesView
 		
 		// *** Handlers ***
 		index: function() {
-			this.appView.contentView = null;
+			// var tapModel = Collections.tapEntry.create({beverage:'5c6837b8-d36b-bede-6fb7-10bc0ba196c3'});
+			var homeScreen = new HomeScreenView({});
+			this.appView.contentView = homeScreen;
 			this.appView.render();
 		},
 
@@ -111,20 +112,6 @@ function($, _, Backbone, Collections, AppView, MainView, FormView, BeveragesView
 			this.appView.render();
 		},
 
-		editModelInstance: function(id) {
-			var collection = this._getCurrentCollection();
-			var modelInstance = collection.get(id);
-
-			var options = {
-				'collection': collection,
-				'model': modelInstance,
-				'isEditing': true,
-			};
-			var formView = new FormView(options);
-			this.appView.contentView = formView;
-			this.appView.render();		
-		},
-
 		listCollection: function() {
 			var collection = this._getCurrentCollection();
 
@@ -150,7 +137,23 @@ function($, _, Backbone, Collections, AppView, MainView, FormView, BeveragesView
 			}	
 			this.appView.contentView = listView;
 			this.appView.render();
-		}
+		},
+		
+		editTapEntry: function(id) {
+			var collection = this._getCurrentCollection();
+			var modelInstance = collection.get(id);
+			var editView = new EditTapEntryView({model: modelInstance});
+			this.appView.contentView = editView;
+			this.appView.render();
+		},
+		
+		editTapEntryBeverage: function(id) {
+			var collection = this._getCurrentCollection();
+			var modelInstance = collection.get(id);
+			var editView = new BeverageBuilder({model: modelInstance});
+			this.appView.contentView = editView;
+			this.appView.render();
+		},
 
 	});
 
